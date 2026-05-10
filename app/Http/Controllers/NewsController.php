@@ -15,11 +15,7 @@ class NewsController extends Controller
      */
     public function index(Request $request): Response
     {
-        $weekNumber = $request->integer('week', (int) date('W'));
-        $year = $request->integer('year', (int) date('Y'));
-
         $articles = NewsArticle::query()
-            ->where('week_number', $weekNumber)
             ->orderByDesc('is_featured')
             ->orderByDesc('created_at')
             ->get();
@@ -29,15 +25,9 @@ class NewsController extends Controller
             ->limit(6)
             ->get();
 
-        /** @var array<int> $weeks */
-        $weeks = range(max(1, $weekNumber - 4), min(52, $weekNumber + 4));
-
         return Inertia::render('news/index', [
             'articles' => $articles,
             'sectors' => $sectors,
-            'currentWeek' => $weekNumber,
-            'currentYear' => $year,
-            'weeks' => $weeks,
         ]);
     }
 }

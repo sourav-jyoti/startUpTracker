@@ -1,6 +1,6 @@
+import { usePage } from '@inertiajs/react';
 import Sidebar from '@/components/tracker/sidebar';
 import TopBar from '@/components/tracker/top-bar';
-import { usePage } from '@inertiajs/react';
 
 interface TrackerLayoutProps {
     children: React.ReactNode;
@@ -10,6 +10,7 @@ export default function TrackerLayout({ children }: TrackerLayoutProps) {
     const { props } = usePage();
     const availableSectors = (props.availableSectors as string[]) || [];
     const activeSector = (props.activeSector as string | null) || null;
+
     return (
         <div className="min-h-screen bg-background text-on-surface">
             <Sidebar />

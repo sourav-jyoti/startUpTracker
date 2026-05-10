@@ -2,23 +2,18 @@ import { Head } from '@inertiajs/react';
 import FeaturedNewsCard from '@/components/tracker/featured-news-card';
 import NewsCard from '@/components/tracker/news-card';
 import SectorList from '@/components/tracker/sector-list';
-import WeekSelector from '@/components/tracker/week-selector';
+
 import TrackerLayout from '@/layouts/tracker-layout';
 import type { NewsArticle, Sector } from '@/types';
 
 interface Props {
     articles: NewsArticle[];
     sectors: Sector[];
-    currentWeek: number;
-    currentYear: number;
-    weeks: number[];
 }
 
 export default function NewsIndex({
     articles,
     sectors,
-    currentWeek,
-    weeks,
 }: Props) {
     const featuredArticle = articles.find((a) => a.is_featured);
     const regularArticles = articles.filter((a) => !a.is_featured);
@@ -31,11 +26,6 @@ export default function NewsIndex({
 
             {/* Center Feed */}
             <section className="flex-1 p-8 bg-surface overflow-y-auto">
-                <WeekSelector
-                    weeks={weeks}
-                    currentWeek={currentWeek}
-                    title="Funding Timeline"
-                />
 
                 <div className="grid grid-cols-1 gap-6">
                     {/* Standard news cards (first 2) */}

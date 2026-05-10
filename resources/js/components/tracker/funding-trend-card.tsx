@@ -37,6 +37,7 @@ function buildPath(): string {
 
 function buildAreaPath(): string {
     const line = buildPath();
+
     return `${line} L${getX(chartData.length - 1)},${chartH} L${getX(0)},${chartH} Z`;
 }
 

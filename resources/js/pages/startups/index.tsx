@@ -11,8 +11,6 @@ import type { Sector, Startup } from '@/types';
 interface Props {
     startups: Startup[];
     sectors: Sector[];
-    availableSectors: string[];
-    activeSector: string | null;
     currentWeek: number;
     currentYear: number;
     weeks: number[];
@@ -21,8 +19,6 @@ interface Props {
 export default function StartupsIndex({
     startups,
     sectors,
-    availableSectors,
-    activeSector,
     currentWeek,
     weeks,
 }: Props) {

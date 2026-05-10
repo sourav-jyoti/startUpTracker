@@ -24,6 +24,7 @@ export default function TopBar({
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
+
         return () =>
             document.removeEventListener('mousedown', handleClickOutside);
     }, []);
@@ -31,11 +32,13 @@ export default function TopBar({
     function handleSectorFilter(sector: string | null) {
         const basePath = url.split('?')[0] || '/';
         const params = new URLSearchParams(window.location.search);
+
         if (sector) {
             params.set('sector', sector);
         } else {
             params.delete('sector');
         }
+
         const query = params.toString();
         router.get(
             `${basePath}${query ? `?${query}` : ''}`,
