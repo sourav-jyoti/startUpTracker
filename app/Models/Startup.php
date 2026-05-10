@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Startup extends Model
+{
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'mission',
+        'logo_url',
+        'funding_amount',
+        'funding_stage',
+        'funding_label',
+        'sector',
+        'hq_location',
+        'founding_date',
+        'burn_rate',
+        'website_url',
+        'total_funding',
+        'is_featured',
+        'week_number',
+        'year',
+    ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'funding_amount' => 'decimal:2',
+            'total_funding' => 'decimal:2',
+            'founding_date' => 'date',
+            'is_featured' => 'boolean',
+        ];
+    }
+
+    /**
+     * @return HasMany<FundingRound, $this>
+     */
+    public function fundingRounds(): HasMany
+    {
+        return $this->hasMany(FundingRound::class);
+    }
+
+    /**
+     * @return HasMany<TeamMember, $this>
+     */
+    public function teamMembers(): HasMany
+    {
+        return $this->hasMany(TeamMember::class);
+    }
+}
