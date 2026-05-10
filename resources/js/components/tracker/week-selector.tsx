@@ -25,6 +25,7 @@ export default function WeekSelector({
 
     function handleShift(direction: -1 | 1) {
         const target = currentWeek + direction;
+
         if (target >= 1 && target <= 52) {
             navigateToWeek(target);
         }

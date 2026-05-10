@@ -17,6 +17,7 @@ export default function Sidebar() {
         if (href === '/') {
             return url === '/' || url.startsWith('/startups');
         }
+
         return url.startsWith(href);
     }
 
