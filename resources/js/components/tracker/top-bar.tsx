@@ -1,4 +1,4 @@
-import { router, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 
 interface TopBarProps {
@@ -10,7 +10,8 @@ export default function TopBar({
     availableSectors = [],
     activeSector = null,
 }: TopBarProps) {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const user = props.auth?.user ?? null;
     const [filterOpen, setFilterOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -130,11 +131,46 @@ export default function TopBar({
                 </div>
 
                 <div className="h-8 w-px bg-outline-variant mx-2" />
-                <button className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors">
-                    <span className="material-symbols-outlined text-[28px]">
-                        account_circle
-                    </span>
-                </button>
+
+                {user ? (
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/startups/create"
+                            className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full text-body-sm font-mono font-bold uppercase tracking-wider hover:bg-primary/90 transition-all active:scale-95"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                add
+                            </span>
+                            Submit
+                        </Link>
+                        <Link
+                            href="/dashboard"
+                            className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors"
+                        >
+                            {user.avatar ? (
+                                <img
+                                    src={user.avatar}
+                                    alt={user.name}
+                                    className="w-7 h-7 rounded-full object-cover"
+                                />
+                            ) : (
+                                <span className="material-symbols-outlined text-[28px]">
+                                    account_circle
+                                </span>
+                            )}
+                        </Link>
+                    </div>
+                ) : (
+                    <Link
+                        href="/login"
+                        className="flex items-center gap-2 bg-primary text-on-primary px-5 py-2 rounded-full text-body-sm font-mono font-bold uppercase tracking-wider hover:bg-primary/90 transition-all active:scale-95"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">
+                            login
+                        </span>
+                        Sign In
+                    </Link>
+                )}
             </div>
         </header>
     );

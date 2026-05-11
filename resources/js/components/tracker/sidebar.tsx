@@ -5,17 +5,22 @@ const navItems = [
     { name: 'News', icon: 'newspaper', href: '/news' },
 ];
 
+const authNavItems = [
+    { name: 'Add Startup', icon: 'add_circle', href: '/startups/create' },
+];
+
 const footerItems = [
     { name: 'Settings', icon: 'settings', href: '#' },
     { name: 'Support', icon: 'help', href: '#' },
 ];
 
 export default function Sidebar() {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const user = props.auth?.user ?? null;
 
     function isActive(href: string): boolean {
         if (href === '/') {
-            return url === '/' || url.startsWith('/startups');
+            return url === '/' || (url.startsWith('/startups') && !url.startsWith('/startups/create'));
         }
 
         return url.startsWith(href);
@@ -60,6 +65,40 @@ export default function Sidebar() {
                         </span>
                     </Link>
                 ))}
+
+                {/* Authenticated-only nav items */}
+                {user && (
+                    <>
+                        <div className="pt-3 pb-1 px-4">
+                            <div className="border-t border-outline-variant" />
+                        </div>
+                        {authNavItems.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                className={`flex items-center gap-3 px-4 py-3 transition-all rounded-lg ${
+                                    isActive(item.href)
+                                        ? 'bg-primary-container text-on-primary-container font-semibold translate-x-1'
+                                        : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-high'
+                                }`}
+                            >
+                                <span
+                                    className="material-symbols-outlined"
+                                    style={
+                                        isActive(item.href)
+                                            ? { fontVariationSettings: "'FILL' 1" }
+                                            : undefined
+                                    }
+                                >
+                                    {item.icon}
+                                </span>
+                                <span className="text-label-caps font-mono font-bold uppercase">
+                                    {item.name}
+                                </span>
+                            </Link>
+                        ))}
+                    </>
+                )}
             </nav>
 
             {/* Footer */}
