@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStartupRequest;
 use App\Models\Sector;
 use App\Models\Startup;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -67,5 +70,42 @@ class StartupController extends Controller
         return Inertia::render('startups/show', [
             'startup' => $startup,
         ]);
+    }
+
+    /**
+     * Display the form for creating a new startup.
+     */
+    public function create(): Response
+    {
+        /** @var list<string> $availableSectors */
+        $availableSectors = Startup::query()
+            ->distinct()
+            ->pluck('sector')
+            ->sort()
+            ->values()
+            ->all();
+
+        return Inertia::render('startups/create', [
+            'availableSectors' => $availableSectors,
+        ]);
+    }
+
+    /**
+     * Store a newly created startup in the database.
+     */
+    public function store(StoreStartupRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $validated['slug'] = Str::slug($validated['name']);
+        $validated['week_number'] = (int) date('W');
+        $validated['year'] = (int) date('Y');
+        $validated['user_id'] = $request->user()?->id;
+        $validated['total_funding'] = $validated['funding_amount'] ?? 0;
+        $validated['funding_label'] = $validated['funding_stage'];
+
+        Startup::create($validated);
+
+        return redirect()->route('home')->with('status', 'Startup submitted successfully!');
     }
 }
