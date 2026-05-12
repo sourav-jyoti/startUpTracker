@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');
 });
 
 // Authenticated startup routes (must be before {startup} wildcard)
