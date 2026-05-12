@@ -3,6 +3,9 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\StartupController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -19,17 +22,29 @@ Route::middleware('guest')->group(function () {
     Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('auth.google.callback');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');
+// Admin routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::post('/startups/{startup}/toggle-featured', [AdminController::class, 'toggleFeatured'])->name('startups.toggle-featured');
+    Route::delete('/startups/{startup}', [AdminController::class, 'destroy'])->name('startups.destroy');
 });
 
-// Authenticated startup routes (must be before {startup} wildcard)
+// Authenticated user routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+});
+
+// Authenticated startup actions
 Route::middleware(['auth'])->group(function () {
     Route::get('/startups/create', [StartupController::class, 'create'])->name('startups.create');
     Route::post('/startups', [StartupController::class, 'store'])->name('startups.store');
+    Route::post('/startups/{startup}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
 });
 
-// Public startup detail route (after /startups/create to avoid wildcard conflict)
-Route::get('/startups/{startup}', [StartupController::class, 'show'])->name('startups.show');
+// API Search
+Route::get('/api/search', [StartupController::class, 'search'])->name('api.search');
+
+// Public startup detail route (must be last due to wildcard)
+Route::get('/startups/{startup:slug}', [StartupController::class, 'show'])->name('startups.show');
 
 require __DIR__.'/settings.php';

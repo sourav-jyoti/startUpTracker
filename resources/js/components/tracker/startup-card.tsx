@@ -1,3 +1,5 @@
+import { router } from '@inertiajs/react';
+import { Bookmark, BookmarkCheck, Rocket } from 'lucide-react';
 import type { Startup } from '@/types';
 
 interface StartupCardProps {
@@ -32,63 +34,80 @@ export function formatFunding(amount: string | number): string {
  * e.g. "series-a" -> "SERIES A"
  */
 export function formatStage(stage: string): string {
+    if (!stage) return 'N/A';
     return stage.replace(/-/g, ' ').toUpperCase();
 }
 
 export default function StartupCard({ startup, onSelect }: StartupCardProps) {
+    const toggleBookmark = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.post(route('bookmarks.toggle', { startup: startup.id }), {}, {
+            preserveScroll: true,
+        });
+    };
+
     return (
         <div
-            className="bg-surface-container-lowest border border-outline-variant p-5 rounded-lg hover:shadow-sm transition-all group cursor-pointer"
+            className="bg-surface-container-lowest border border-outline-variant p-6 rounded-2xl hover:shadow-lg hover:shadow-primary/5 transition-all group cursor-pointer relative flex flex-col h-full"
             onClick={() => onSelect?.(startup)}
         >
-            <div className="flex items-start justify-between">
-                <div className="flex gap-4">
-                    {/* Logo */}
-                    <div className="w-14 h-14 bg-surface-container-high rounded-lg overflow-hidden flex items-center justify-center border border-outline-variant/30 flex-shrink-0">
-                        {startup.logo_url ? (
-                            <img
-                                src={startup.logo_url}
-                                alt={startup.name}
-                                className="w-10 h-10 object-contain"
-                            />
-                        ) : (
-                            <span className="material-symbols-outlined text-on-surface-variant text-[28px]">
-                                rocket_launch
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Info */}
-                    <div>
-                        <h3 className="text-title-sm font-semibold mb-1">
-                            {startup.name}
-                        </h3>
-                        <p className="text-body-sm text-on-surface-variant mb-3">
-                            {startup.description}
-                        </p>
-                        <div className="flex items-center gap-3">
-                            <span className="text-secondary font-mono text-data-point font-bold">
-                                {formatFunding(startup.funding_amount)}{' '}
-                                {formatStage(startup.funding_stage)}
-                            </span>
-                            <span className="w-1 h-1 rounded-full bg-outline-variant" />
-                            <span className="text-label-caps font-mono font-bold text-on-surface-variant">
-                                {startup.funding_label}
-                            </span>
-                        </div>
-                    </div>
+            <div className="flex items-start justify-between mb-6">
+                <div className="w-16 h-16 bg-surface-container rounded-2xl overflow-hidden flex items-center justify-center border border-outline-variant/30 flex-shrink-0 shadow-inner group-hover:bg-primary/5 transition-colors">
+                    {startup.logo_url ? (
+                        <img
+                            src={startup.logo_url}
+                            alt={startup.name}
+                            className="w-12 h-12 object-contain"
+                        />
+                    ) : (
+                        <Rocket className="w-8 h-8 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
+                    )}
                 </div>
-
-                {/* Bookmark */}
                 <button
-                    className="text-on-surface-variant hover:text-primary transition-colors flex-shrink-0"
-                    onClick={(e) => e.stopPropagation()}
+                    className={`transition-all flex-shrink-0 p-2.5 rounded-xl hover:bg-surface-container-high active:scale-90 ${
+                        startup.is_bookmarked ? 'text-primary bg-primary/10' : 'text-on-surface-variant bg-surface-container'
+                    }`}
+                    onClick={toggleBookmark}
                 >
-                    <span className="material-symbols-outlined">
-                        bookmark_add
-                    </span>
+                    {startup.is_bookmarked ? (
+                        <BookmarkCheck className="w-5 h-5 fill-current" />
+                    ) : (
+                        <Bookmark className="w-5 h-5" />
+                    )}
                 </button>
             </div>
+
+            <div className="flex-1">
+                <h3 className="text-title-base font-bold mb-2 group-hover:text-primary transition-colors">
+                    {startup.name}
+                </h3>
+                <p className="text-body-sm text-on-surface-variant mb-6 line-clamp-2 leading-relaxed">
+                    {startup.description}
+                </p>
+            </div>
+
+            <div className="pt-4 border-t border-outline-variant flex items-center justify-between">
+                <div className="flex flex-col">
+                    <span className="text-label-caps font-mono font-bold text-primary text-[10px] tracking-tight">
+                        {formatStage(startup.funding_stage)}
+                    </span>
+                    <span className="text-title-sm font-mono font-bold">
+                        {formatFunding(startup.funding_amount)}
+                    </span>
+                </div>
+                <div className="flex flex-col items-end">
+                    <span className="text-label-caps font-mono font-bold opacity-30 text-[8px]">CATEGORY</span>
+                    <span className="text-body-xs font-bold uppercase tracking-tighter">
+                        {startup.sector}
+                    </span>
+                </div>
+            </div>
+            
+            {startup.is_featured && (
+                <div className="absolute top-0 right-0 p-1">
+                    <div className="bg-amber-500 w-2 h-2 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                </div>
+            )}
         </div>
     );
 }

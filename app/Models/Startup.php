@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Startup extends Model
@@ -72,5 +73,13 @@ class Startup extends Model
     public function teamMembers(): HasMany
     {
         return $this->hasMany(TeamMember::class);
+    }
+
+    /**
+     * @return BelongsToMany<User, $this>
+     */
+    public function bookmarkedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'bookmarks');
     }
 }

@@ -1,6 +1,7 @@
 import { usePage } from '@inertiajs/react';
 import Sidebar from '@/components/tracker/sidebar';
 import TopBar from '@/components/tracker/top-bar';
+import CommandPalette from '@/components/tracker/command-palette';
 
 interface TrackerLayoutProps {
     children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function TrackerLayout({ children }: TrackerLayoutProps) {
                 />
                 <main className="flex flex-1">{children}</main>
             </div>
+            <CommandPalette />
         </div>
     );
 }
