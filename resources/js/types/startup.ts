@@ -30,6 +30,9 @@ export type Startup = {
     funding_amount: string;
     funding_stage: string;
     funding_label: string | null;
+    competition: string | null;
+    registration_type: string | null;
+    certificate_number: string | null;
     sector: string;
     hq_location: string;
     founding_date: string | null;
@@ -42,6 +45,9 @@ export type Startup = {
     year: number;
     funding_rounds?: FundingRound[];
     team_members?: TeamMember[];
+    user?: {
+        name: string;
+    };
 };
 
 export type NewsArticle = {

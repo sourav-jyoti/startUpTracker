@@ -14,6 +14,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import admin from '@/routes/admin';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
@@ -36,7 +37,7 @@ export function AppSidebar() {
     if (isAdmin) {
         mainNavItems.push({
             title: 'Admin Dashboard',
-            href: route('admin.dashboard'),
+            href: admin.dashboard.url(),
             icon: ShieldCheck,
         });
     }

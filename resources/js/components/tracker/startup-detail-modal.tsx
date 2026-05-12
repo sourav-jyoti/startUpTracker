@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { formatFunding, formatStage } from '@/components/tracker/startup-card';
 import type { Startup } from '@/types';
+import bookmarks from '@/routes/bookmarks';
 
 interface StartupDetailModalProps {
     startup: Startup;
@@ -26,7 +27,7 @@ export default function StartupDetailModal({
 }: StartupDetailModalProps) {
     const toggleBookmark = (e: React.MouseEvent) => {
         e.stopPropagation();
-        router.post(route('bookmarks.toggle', { startup: startup.id }), {}, {
+        router.post(bookmarks.toggle.url({ startup: startup.id }), {}, {
             preserveScroll: true,
         });
     };
@@ -152,15 +153,52 @@ export default function StartupDetailModal({
 
                 {/* Main Content */}
                 <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
-                    {/* Mission */}
-                    {startup.mission && (
+                    {/* About & Mission */}
+                    <section className="mb-10">
+                        <h3 className="text-title-sm font-semibold mb-3 border-b border-outline-variant/30 pb-2">
+                            About {startup.name}
+                        </h3>
+                        {startup.competition && (
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-lg mb-4">
+                                <Rocket className="w-4 h-4 text-primary" />
+                                <span className="text-body-sm font-bold text-primary tracking-tight">
+                                    Part of {startup.competition}
+                                </span>
+                            </div>
+                        )}
+                        <p className="text-body-base text-on-surface-variant leading-relaxed">
+                            {startup.mission || startup.description}
+                        </p>
+                    </section>
+
+                    {/* Registration Details */}
+                    {(startup.registration_type || startup.certificate_number) && (
                         <section className="mb-10">
                             <h3 className="text-title-sm font-semibold mb-3 border-b border-outline-variant/30 pb-2">
-                                Mission & Vision
+                                Registration Details
                             </h3>
-                            <p className="text-body-base text-on-surface-variant leading-relaxed">
-                                {startup.mission}
-                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {startup.registration_type && (
+                                    <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/50">
+                                        <span className="text-label-caps font-mono font-bold opacity-50 block mb-1 text-[10px]">
+                                            Registration Type
+                                        </span>
+                                        <span className="text-body-base font-semibold">
+                                            {startup.registration_type}
+                                        </span>
+                                    </div>
+                                )}
+                                {startup.certificate_number && (
+                                    <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/50">
+                                        <span className="text-label-caps font-mono font-bold opacity-50 block mb-1 text-[10px]">
+                                            Certificate Number
+                                        </span>
+                                        <span className="text-body-base font-mono font-semibold">
+                                            {startup.certificate_number}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </section>
                     )}
 

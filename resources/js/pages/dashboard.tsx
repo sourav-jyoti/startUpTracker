@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -30,6 +30,7 @@ import AppLayout from '@/layouts/app-layout';
 import StartupCard from '@/components/tracker/startup-card';
 import { formatFunding } from '@/components/tracker/startup-card';
 import type { Startup } from '@/types';
+import startupRoutes from '@/routes/startups';
 
 interface DashboardProps {
     stats: {
@@ -80,7 +81,7 @@ export default function Dashboard({ stats, startups, bookmarkedStartups, charts 
                         </div>
                         <div className="flex-shrink-0">
                             <button 
-                                onClick={() => window.location.href = route('startups.create')}
+                                onClick={() => router.get(startupRoutes.create.url())}
                                 className="group bg-primary text-on-primary px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
                             >
                                 <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
@@ -267,12 +268,13 @@ export default function Dashboard({ stats, startups, bookmarkedStartups, charts 
                                                     innerRadius={70}
                                                     outerRadius={95}
                                                     paddingAngle={8}
+                                                    cornerRadius={4}
                                                     dataKey="count"
                                                     animationBegin={500}
                                                     animationDuration={1000}
                                                 >
                                                     {charts.sectorBreakdown.map((entry, index) => (
-                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} cornerRadius={4} />
+                                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                     ))}
                                                 </Pie>
                                                 <Tooltip 
@@ -378,7 +380,7 @@ function EmptyState({ icon, title, description }: { icon: React.ReactNode, title
                 {description}
             </p>
             <button 
-                onClick={() => window.location.href = route('startups.create')}
+                onClick={() => router.get(startupRoutes.create.url())}
                 className="flex items-center gap-2 text-primary font-bold hover:underline"
             >
                 <Plus className="w-5 h-5" />

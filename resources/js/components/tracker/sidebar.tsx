@@ -10,7 +10,7 @@ const authNavItems = [
 ];
 
 const footerItems = [
-    { name: 'Settings', icon: 'settings', href: '#' },
+    { name: 'Settings', icon: 'settings', href: '/settings/profile' },
     { name: 'Support', icon: 'help', href: '#' },
 ];
 
