@@ -18,12 +18,16 @@ class StartupController extends Controller
      */
     public function index(Request $request): Response
     {
-        $weekNumber = $request->integer('week', (int) date('W'));
+        $weekInput = $request->input('week');
+        $isAllWeeks = $weekInput === 'all';
+        $weekNumber = $isAllWeeks ? 'all' : (int) ($weekInput ?? date('W'));
         $year = $request->integer('year', (int) date('Y'));
         $sectorFilter = $request->string('sector')->value() ?: null;
 
         $startups = Startup::query()
-            ->where('week_number', $weekNumber)
+            ->when(! $isAllWeeks, function ($query) use ($weekNumber): void {
+                $query->where('week_number', $weekNumber);
+            })
             ->when($sectorFilter, function ($query, string $sector): void {
                 $query->where('sector', $sector);
             })
@@ -45,7 +49,8 @@ class StartupController extends Controller
             ->all();
 
         /** @var array<int> $weeks */
-        $weeks = range(max(1, $weekNumber - 4), min(52, $weekNumber + 4));
+        $weeksNum = $isAllWeeks ? (int) date('W') : $weekNumber;
+        $weeks = range(max(1, $weeksNum - 4), min(52, $weeksNum + 4));
 
         return Inertia::render('startups/index', [
             'startups' => $startups,

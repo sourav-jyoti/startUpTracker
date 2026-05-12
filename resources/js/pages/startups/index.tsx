@@ -11,7 +11,7 @@ import type { Sector, Startup } from '@/types';
 interface Props {
     startups: Startup[];
     sectors: Sector[];
-    currentWeek: number;
+    currentWeek: number | 'all';
     currentYear: number;
     weeks: number[];
 }
