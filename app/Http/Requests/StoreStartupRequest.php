@@ -32,6 +32,10 @@ class StoreStartupRequest extends FormRequest
             'logo_url' => ['nullable', 'url', 'max:500'],
             'funding_amount' => ['nullable', 'numeric', 'min:0'],
             'founding_date' => ['nullable', 'date'],
+            'competition' => ['nullable', 'string', 'max:255'],
+            'registration_type' => ['nullable', 'string', 'max:255'],
+            'certificate_number' => ['nullable', 'string', 'max:255'],
+            'week_number' => ['nullable', 'integer', 'min:1', 'max:52'],
         ];
     }
 }

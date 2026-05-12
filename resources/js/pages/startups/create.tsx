@@ -218,29 +218,105 @@ export default function CreateStartup({ availableSectors }: Props) {
                                             </div>
                                         </div>
 
-                                        <div className="grid gap-2">
-                                            <Label htmlFor="founding_date" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
-                                                Founding Date
-                                            </Label>
-                                            <Input
-                                                id="founding_date"
-                                                type="date"
-                                                name="founding_date"
-                                                className="bg-surface-container-low border-outline-variant rounded-lg font-mono max-w-xs"
-                                            />
-                                            <InputError message={errors.founding_date} />
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="founding_date" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
+                                                    Founding Date
+                                                </Label>
+                                                <Input
+                                                    id="founding_date"
+                                                    type="date"
+                                                    name="founding_date"
+                                                    className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
+                                                />
+                                                <InputError message={errors.founding_date} />
+                                            </div>
+
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="week_number" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
+                                                    Week Number (1-52)
+                                                </Label>
+                                                <Input
+                                                    id="week_number"
+                                                    type="number"
+                                                    name="week_number"
+                                                    min="1"
+                                                    max="52"
+                                                    defaultValue={Math.ceil((new Date().getTime() - new Date(new Date().getFullYear(), 0, 1).getTime()) / 604800000)}
+                                                    placeholder="Default: Current Week"
+                                                    className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
+                                                />
+                                                <InputError message={errors.week_number} />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Section 3: Additional Info */}
+                                 {/* Section 3: Ecosystem & Registration */}
+                                <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8">
+                                    <div className="flex items-center gap-2 mb-6">
+                                        <span className="material-symbols-outlined text-primary text-[22px]">
+                                            workspace_premium
+                                        </span>
+                                        <h2 className="text-title-md font-semibold text-on-surface">
+                                            Ecosystem & Registration
+                                        </h2>
+                                    </div>
+                                    <div className="grid gap-6">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="competition" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
+                                                Competition / Program (e.g. SIH 2024)
+                                            </Label>
+                                            <Input
+                                                id="competition"
+                                                type="text"
+                                                name="competition"
+                                                placeholder="e.g., SIH2024, YCombinator"
+                                                className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
+                                            />
+                                            <InputError message={errors.competition} />
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="registration_type" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
+                                                    Registration Type
+                                                </Label>
+                                                <Input
+                                                    id="registration_type"
+                                                    type="text"
+                                                    name="registration_type"
+                                                    placeholder="e.g., DIPP, Private Limited"
+                                                    className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
+                                                />
+                                                <InputError message={errors.registration_type} />
+                                            </div>
+
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="certificate_number" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
+                                                    Certificate Number
+                                                </Label>
+                                                <Input
+                                                    id="certificate_number"
+                                                    type="text"
+                                                    name="certificate_number"
+                                                    placeholder="e.g., 223BL"
+                                                    className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
+                                                />
+                                                <InputError message={errors.certificate_number} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Section 4: Links */}
                                 <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8">
                                     <div className="flex items-center gap-2 mb-6">
                                         <span className="material-symbols-outlined text-primary text-[22px]">
                                             link
                                         </span>
                                         <h2 className="text-title-md font-semibold text-on-surface">
-                                            Additional Information
+                                            Links
                                         </h2>
                                     </div>
                                     <div className="grid gap-6">

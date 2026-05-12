@@ -23,13 +23,24 @@ class StartupController extends Controller
         $weekNumber = $isAllWeeks ? 'all' : (int) ($weekInput ?? date('W'));
         $year = $request->integer('year', (int) date('Y'));
         $sectorFilter = $request->string('sector')->value() ?: null;
+        $searchFilter = $request->string('search')->value() ?: null;
 
         $startups = Startup::query()
-            ->when(! $isAllWeeks, function ($query) use ($weekNumber): void {
+            ->when(! $isAllWeeks && !$searchFilter, function ($query) use ($weekNumber): void {
                 $query->where('week_number', $weekNumber);
             })
             ->when($sectorFilter, function ($query, string $sector): void {
                 $query->where('sector', $sector);
+            })
+            ->when($searchFilter, function ($query, string $search): void {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('sector', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%")
+                      ->orWhereHas('teamMembers', function ($sq) use ($search) {
+                          $sq->where('name', 'like', "%{$search}%");
+                      });
+                });
             })
             ->orderByDesc('is_featured')
             ->orderByDesc('funding_amount')
@@ -65,6 +76,7 @@ class StartupController extends Controller
             'sectors' => $sectors,
             'availableSectors' => $availableSectors,
             'activeSector' => $sectorFilter,
+            'search' => $searchFilter,
             'currentWeek' => $weekNumber,
             'currentYear' => $year,
             'weeks' => $weeks,
@@ -115,7 +127,7 @@ class StartupController extends Controller
         $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['week_number'] = (int) date('W');
+        $validated['week_number'] = $request->integer('week_number', (int) date('W'));
         $validated['year'] = (int) date('Y');
         $validated['user_id'] = $request->user()?->id;
         $validated['total_funding'] = $validated['funding_amount'] ?? 0;
@@ -135,6 +147,10 @@ class StartupController extends Controller
         
         return Startup::where('name', 'like', "%{$q}%")
             ->orWhere('sector', 'like', "%{$q}%")
+            ->orWhere('description', 'like', "%{$q}%")
+            ->orWhereHas('teamMembers', function ($sq) use ($q) {
+                $sq->where('name', 'like', "%{$q}%");
+            })
             ->limit(5)
             ->get();
     }

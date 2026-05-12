@@ -14,6 +14,8 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { formatFunding } from '@/components/tracker/startup-card';
 import type { Startup } from '@/types';
+import admin from '@/routes/admin';
+import startupRoutes from '@/routes/startups';
 
 interface AdminDashboardProps {
     startups: {
@@ -34,14 +36,14 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
     ];
 
     const toggleFeatured = (id: number) => {
-        router.post(route('admin.startups.toggle-featured', { startup: id }), {}, {
+        router.post(admin.startups.toggleFeatured.url({ startup: id }), {}, {
             preserveScroll: true,
         });
     };
 
     const deleteStartup = (id: number) => {
         if (confirm('Are you sure you want to delete this startup? This action cannot be undone.')) {
-            router.delete(route('admin.startups.destroy', { startup: id }), {
+            router.delete(admin.startups.destroy.url({ startup: id }), {
                 preserveScroll: true,
             });
         }
@@ -125,9 +127,9 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                                         <td className="p-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold">
-                                                    {startup.user?.name.charAt(0)}
+                                                    {startup.user?.name ? startup.user.name.charAt(0) : '?'}
                                                 </div>
-                                                <span className="text-body-sm">{startup.user?.name}</span>
+                                                <span className="text-body-sm">{startup.user?.name || 'Unknown'}</span>
                                             </div>
                                         </td>
                                         <td className="p-4">
@@ -162,7 +164,7 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                                                     <Star className={`w-4 h-4 ${startup.is_featured ? 'fill-current' : ''}`} />
                                                 </button>
                                                 <a 
-                                                    href={route('startups.show', { startup: startup.slug })}
+                                                    href={startupRoutes.show.url({ startup: startup.slug })}
                                                     target="_blank"
                                                     className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all"
                                                 >

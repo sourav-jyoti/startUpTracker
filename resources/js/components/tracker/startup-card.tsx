@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react';
 import { Bookmark, BookmarkCheck, Rocket } from 'lucide-react';
 import type { Startup } from '@/types';
+import bookmarks from '@/routes/bookmarks';
 
 interface StartupCardProps {
     startup: Startup;
@@ -41,7 +42,7 @@ export function formatStage(stage: string): string {
 export default function StartupCard({ startup, onSelect }: StartupCardProps) {
     const toggleBookmark = (e: React.MouseEvent) => {
         e.stopPropagation();
-        router.post(route('bookmarks.toggle', { startup: startup.id }), {}, {
+        router.post(bookmarks.toggle.url({ startup: startup.id }), {}, {
             preserveScroll: true,
         });
     };
@@ -84,6 +85,16 @@ export default function StartupCard({ startup, onSelect }: StartupCardProps) {
                 <p className="text-body-sm text-on-surface-variant mb-6 line-clamp-2 leading-relaxed">
                     {startup.description}
                 </p>
+                {startup.competition && (
+                    <div className="flex items-center gap-1.5 mb-6">
+                        <span className="material-symbols-outlined text-[14px] text-primary">
+                            emoji_events
+                        </span>
+                        <span className="text-[11px] font-bold text-primary/80 uppercase tracking-wider">
+                            {startup.competition}
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="pt-4 border-t border-outline-variant flex items-center justify-between">
