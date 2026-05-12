@@ -18,9 +18,11 @@ createInertiaApp({
                 return AuthLayout;
             case name.startsWith('settings/'):
                 return [AppLayout, SettingsLayout];
+            case name === 'dashboard':
+            case name.startsWith('admin/'):
             case name.startsWith('startups/'):
             case name.startsWith('news/'):
-                // Return undefined so the page's own .layout static property is used
+                // Return undefined so the page's own .layout static property is used or manual wrapping is respected
                 return undefined;
             default:
                 return AppLayout;

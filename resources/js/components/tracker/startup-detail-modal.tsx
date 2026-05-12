@@ -1,3 +1,17 @@
+import { router } from '@inertiajs/react';
+import { 
+    Bookmark, 
+    BookmarkCheck, 
+    Twitter, 
+    Linkedin, 
+    Github, 
+    Mail, 
+    Globe, 
+    User,
+    ChevronRight,
+    X,
+    Rocket
+} from 'lucide-react';
 import { formatFunding, formatStage } from '@/components/tracker/startup-card';
 import type { Startup } from '@/types';
 
@@ -10,6 +24,13 @@ export default function StartupDetailModal({
     startup,
     onClose,
 }: StartupDetailModalProps) {
+    const toggleBookmark = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.post(route('bookmarks.toggle', { startup: startup.id }), {}, {
+            preserveScroll: true,
+        });
+    };
+
     const totalFunding = startup.funding_rounds
         ? startup.funding_rounds.reduce(
               (sum, round) => sum + parseFloat(round.amount),
@@ -32,13 +53,13 @@ export default function StartupDetailModal({
                     onClick={onClose}
                     className="absolute top-4 right-4 z-10 p-2 hover:bg-surface-container rounded-full transition-colors"
                 >
-                    <span className="material-symbols-outlined">close</span>
+                    <X className="w-5 h-5" />
                 </button>
 
                 {/* Sidebar Info */}
-                <div className="md:w-1/3 bg-surface-container p-8 flex flex-col border-r border-outline-variant">
+                <div className="md:w-1/3 bg-surface-container p-8 flex flex-col border-r border-outline-variant overflow-y-auto">
                     {/* Logo */}
-                    <div className="w-32 h-32 bg-white rounded-2xl p-4 shadow-sm border border-outline-variant mb-6 mx-auto md:mx-0 overflow-hidden">
+                    <div className="w-32 h-32 bg-white rounded-2xl p-4 shadow-sm border border-outline-variant mb-6 mx-auto md:mx-0 overflow-hidden relative">
                         {startup.logo_url ? (
                             <img
                                 src={startup.logo_url}
@@ -47,16 +68,28 @@ export default function StartupDetailModal({
                             />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                                <span className="material-symbols-outlined text-on-surface-variant text-[48px]">
-                                    rocket_launch
-                                </span>
+                                <Rocket className="w-12 h-12 text-on-surface-variant opacity-30" />
                             </div>
                         )}
                     </div>
 
-                    <h2 className="text-display-lg font-bold mb-2">
-                        {startup.name}
-                    </h2>
+                    <div className="flex items-start justify-between mb-2">
+                        <h2 className="text-display-lg font-bold">
+                            {startup.name}
+                        </h2>
+                        <button
+                            className={`transition-all p-2 rounded-full hover:bg-surface-container-high active:scale-90 ${
+                                startup.is_bookmarked ? 'text-primary' : 'text-on-surface-variant'
+                            }`}
+                            onClick={toggleBookmark}
+                        >
+                            {startup.is_bookmarked ? (
+                                <BookmarkCheck className="w-6 h-6 fill-current" />
+                            ) : (
+                                <Bookmark className="w-6 h-6" />
+                            )}
+                        </button>
+                    </div>
 
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2 mb-6">
@@ -74,7 +107,7 @@ export default function StartupDetailModal({
                     <div className="space-y-4 mt-auto">
                         {startup.founding_date && (
                             <div>
-                                <span className="text-label-caps font-mono font-bold opacity-50 block mb-1">
+                                <span className="text-label-caps font-mono font-bold opacity-50 block mb-1 text-[10px]">
                                     Founding Date
                                 </span>
                                 <span className="text-body-sm font-semibold">
@@ -89,7 +122,7 @@ export default function StartupDetailModal({
                             </div>
                         )}
                         <div>
-                            <span className="text-label-caps font-mono font-bold opacity-50 block mb-1">
+                            <span className="text-label-caps font-mono font-bold opacity-50 block mb-1 text-[10px]">
                                 HQ Location
                             </span>
                             <span className="text-body-sm font-semibold">
@@ -97,23 +130,21 @@ export default function StartupDetailModal({
                             </span>
                         </div>
                         <div className="flex gap-4 pt-4 border-t border-outline-variant">
-                            <a
-                                href={startup.website_url || '#'}
-                                className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
-                            >
-                                public
-                            </a>
-                            <a
-                                href="#"
-                                className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
-                            >
-                                hub
-                            </a>
+                            {startup.website_url && (
+                                <a
+                                    href={startup.website_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-on-surface-variant hover:text-primary transition-colors"
+                                >
+                                    <Globe className="w-5 h-5" />
+                                </a>
+                            )}
                             <a
                                 href="#"
-                                className="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors"
+                                className="text-on-surface-variant hover:text-primary transition-colors"
                             >
-                                mail
+                                <Mail className="w-5 h-5" />
                             </a>
                         </div>
                     </div>
@@ -136,16 +167,16 @@ export default function StartupDetailModal({
                     {/* Core Team */}
                     {startup.team_members && startup.team_members.length > 0 && (
                         <section className="mb-10">
-                            <h3 className="text-title-sm font-semibold mb-4 border-b border-outline-variant/30 pb-2">
+                            <h3 className="text-title-sm font-semibold mb-6 border-b border-outline-variant/30 pb-2">
                                 Core Team
                             </h3>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-8">
                                 {startup.team_members.map((member) => (
                                     <div
                                         key={member.id}
-                                        className="flex items-center gap-3"
+                                        className="flex flex-col md:flex-row gap-6 p-4 rounded-xl hover:bg-surface-container transition-colors"
                                     >
-                                        <div className="w-12 h-12 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden flex-shrink-0">
+                                        <div className="w-20 h-20 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden flex-shrink-0 mx-auto md:mx-0 shadow-sm">
                                             {member.photo_url ? (
                                                 <img
                                                     src={member.photo_url}
@@ -154,19 +185,48 @@ export default function StartupDetailModal({
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-on-surface-variant">
-                                                        person
-                                                    </span>
+                                                    <User className="w-8 h-8 text-on-surface-variant opacity-30" />
                                                 </div>
                                             )}
                                         </div>
-                                        <div>
-                                            <p className="text-body-sm font-bold">
-                                                {member.name}
-                                            </p>
-                                            <p className="text-label-caps font-mono font-bold opacity-60">
-                                                {member.role}
-                                            </p>
+                                        <div className="flex-1">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-body-lg font-bold">
+                                                            {member.name}
+                                                        </p>
+                                                        {member.is_founder && (
+                                                            <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded-full border border-primary/20">FOUNDER</span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-label-caps font-mono font-bold text-on-surface-variant opacity-60">
+                                                        {member.role}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    {member.twitter_url && (
+                                                        <a href={member.twitter_url} target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-primary transition-colors">
+                                                            <Twitter className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                    {member.linkedin_url && (
+                                                        <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-primary transition-colors">
+                                                            <Linkedin className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                    {member.github_url && (
+                                                        <a href={member.github_url} target="_blank" rel="noopener noreferrer" className="text-on-surface-variant hover:text-primary transition-colors">
+                                                            <Github className="w-4 h-4" />
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {member.bio && (
+                                                <p className="text-body-sm text-on-surface-variant leading-relaxed italic">
+                                                    "{member.bio}"
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

@@ -17,9 +17,14 @@ class TeamMember extends Model
      */
     protected $fillable = [
         'startup_id',
+        'is_founder',
         'name',
         'role',
+        'bio',
         'photo_url',
+        'twitter_url',
+        'linkedin_url',
+        'github_url',
     ];
 
     /**

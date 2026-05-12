@@ -10,9 +10,14 @@ export type FundingRound = {
 export type TeamMember = {
     id: number;
     startup_id: number;
+    is_founder: boolean;
     name: string;
     role: string;
+    bio: string | null;
     photo_url: string | null;
+    twitter_url: string | null;
+    linkedin_url: string | null;
+    github_url: string | null;
 };
 
 export type Startup = {
@@ -32,6 +37,7 @@ export type Startup = {
     website_url: string | null;
     total_funding: string;
     is_featured: boolean;
+    is_bookmarked?: boolean;
     week_number: number;
     year: number;
     funding_rounds?: FundingRound[];

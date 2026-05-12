@@ -52,6 +52,14 @@ class StartupController extends Controller
         $weeksNum = $isAllWeeks ? (int) date('W') : $weekNumber;
         $weeks = range(max(1, $weeksNum - 4), min(52, $weeksNum + 4));
 
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+        $bookmarkedIds = $user ? $user->bookmarkedStartups()->pluck('startup_id')->toArray() : [];
+
+        $startups->each(function ($startup) use ($bookmarkedIds): void {
+            $startup->is_bookmarked = in_array($startup->id, $bookmarkedIds);
+        });
+
         return Inertia::render('startups/index', [
             'startups' => $startups,
             'sectors' => $sectors,
@@ -66,11 +74,15 @@ class StartupController extends Controller
     /**
      * Display the startup detail data for the modal.
      */
-    public function show(Startup $startup): Response
+    public function show(Request $request, Startup $startup): Response
     {
         $startup->load(['fundingRounds' => function ($query): void {
             $query->orderByDesc('date');
         }, 'teamMembers']);
+
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+        $startup->is_bookmarked = $user ? $user->bookmarkedStartups()->where('startup_id', $startup->id)->exists() : false;
 
         return Inertia::render('startups/show', [
             'startup' => $startup,
@@ -112,5 +124,18 @@ class StartupController extends Controller
         Startup::create($validated);
 
         return redirect()->route('home')->with('status', 'Startup submitted successfully!');
+    }
+    /**
+     * Search startups for the command palette.
+     */
+    public function search(Request $request)
+    {
+        $q = $request->query('q');
+        if (!$q) return response()->json([]);
+        
+        return Startup::where('name', 'like', "%{$q}%")
+            ->orWhere('sector', 'like', "%{$q}%")
+            ->limit(5)
+            ->get();
     }
 }
