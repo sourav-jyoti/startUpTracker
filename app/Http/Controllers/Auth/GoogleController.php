@@ -28,7 +28,7 @@ class GoogleController extends Controller
     {
         /** @var \Laravel\Socialite\Two\GoogleProvider $driver */
         $driver = Socialite::driver('google');
-        $googleUser = $driver->user();
+        $googleUser = $driver->stateless()->user();
 
         $user = User::where('google_id', $googleUser->getId())->first();
 
