@@ -24,8 +24,10 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
+        // vite.config.ts
         wayfinder({
             formVariants: true,
+            command: process.env.VERCEL ? 'echo' : 'php artisan wayfinder:generate',
         }),
     ],
 });
