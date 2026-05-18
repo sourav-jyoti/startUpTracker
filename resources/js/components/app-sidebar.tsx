@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, ShieldCheck, Rocket, Search } from 'lucide-react';
+import { BookOpen, FolderGit2, LayoutGrid, ShieldCheck, Rocket, Search, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -19,9 +19,27 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { auth } = usePage().props as any;
-    const isAdmin = auth.user.is_admin;
+    const { url } = usePage();
+    const isAdmin = auth.user?.is_admin;
+    const isAdminRoute = url.startsWith('/admin') || window.location.pathname.startsWith('/admin');
 
-    const mainNavItems: NavItem[] = [
+    const mainNavItems: NavItem[] = isAdminRoute ? [
+        {
+            title: 'Admin Dashboard',
+            href: '/admin/dashboard',
+            icon: ShieldCheck,
+        },
+        {
+            title: 'Manage Users',
+            href: '/admin/users',
+            icon: Users,
+        },
+        {
+            title: 'Back to App',
+            href: '/dashboard',
+            icon: LayoutGrid,
+        },
+    ] : [
         {
             title: 'Dashboard',
             href: dashboard(),
@@ -34,7 +52,7 @@ export function AppSidebar() {
         },
     ];
 
-    if (isAdmin) {
+    if (!isAdminRoute && isAdmin) {
         mainNavItems.push({
             title: 'Admin Dashboard',
             href: admin.dashboard.url(),
@@ -65,7 +83,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems} label={isAdminRoute ? 'Administration' : 'Platform'} />
             </SidebarContent>
 
             <SidebarFooter>
