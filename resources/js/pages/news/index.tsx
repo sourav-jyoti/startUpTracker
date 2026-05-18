@@ -1,10 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
 import FeaturedNewsCard from '@/components/tracker/featured-news-card';
 import NewsCard from '@/components/tracker/news-card';
-import SectorList from '@/components/tracker/sector-list';
+import FundingTrendCard from '@/components/tracker/funding-trend-card';
+import { formatFunding } from '@/components/tracker/startup-card';
 
 import TrackerLayout from '@/layouts/tracker-layout';
-import type { NewsArticle, Sector } from '@/types';
+import type { NewsArticle, Startup } from '@/types';
 
 interface Props {
     articles: {
@@ -14,18 +15,19 @@ interface Props {
         last_page: number;
         total: number;
     };
-    sectors: Sector[];
+    trendingByFunding: Startup[];
+    topByUpvote: Startup[];
 }
 
 export default function NewsIndex({
     articles,
-    sectors,
+    trendingByFunding,
+    topByUpvote,
 }: Props) {
     const articlesData = articles.data || [];
-    const featuredArticle = articlesData.find((a) => a.is_featured);
-    const regularArticles = articlesData.filter((a) => !a.is_featured);
-    const thumbnailArticles = regularArticles.filter((a) => a.thumbnail_url);
-    const standardArticles = regularArticles.filter((a) => !a.thumbnail_url);
+    // With our new controller logic, the first article is the most upvoted (highest score)
+    const featuredArticle = articlesData[0];
+    const regularArticles = articlesData.filter((a) => a.id !== featuredArticle?.id);
 
     return (
         <>
@@ -49,7 +51,10 @@ export default function NewsIndex({
                                         .filter(a => a.id !== (featuredArticle?.id || articlesData[0]?.id))
                                         .slice(0, 2)
                                         .map((article) => (
-                                            <article
+                                            <a
+                                                href={article.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
                                                 key={article.id}
                                                 className="bg-surface-container-lowest border border-outline-variant p-5 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer flex-1"
                                             >
@@ -70,7 +75,7 @@ export default function NewsIndex({
                                                         {article.read_time} • {article.source}
                                                     </span>
                                                 </div>
-                                            </article>
+                                            </a>
                                         ))}
                                 </div>
                             </div>
@@ -119,76 +124,44 @@ export default function NewsIndex({
             </section>
 
             {/* Right Rail */}
-            <aside className="w-[320px] p-8 border-l border-outline-variant bg-surface-container-low hidden xl:block overflow-y-auto custom-scrollbar">
+            <aside className="w-[400px] p-10 bg-surface-container-low/50 border-l border-outline-variant flex-shrink-0 overflow-y-auto custom-scrollbar hidden xl:block">
                 <div className="sticky top-0">
-                    {/* Funding Trends */}
-                    <div className="mb-8">
-                        <h4 className="text-label-caps font-mono font-bold text-on-surface-variant mb-4 uppercase tracking-widest">
-                            FUNDING TRENDS
-                        </h4>
-                        <div className="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg">
-                            <div className="flex justify-between items-end mb-4">
-                                <div>
-                                    <p className="text-label-caps font-mono font-bold text-on-surface-variant">
-                                        Weekly Volume
-                                    </p>
-                                    <p className="text-headline-md font-semibold text-secondary">
-                                        $1.2B
-                                    </p>
-                                </div>
-                                <span className="text-body-sm font-mono text-secondary flex items-center gap-1 font-bold">
-                                    <span className="material-symbols-outlined text-[16px]">
-                                        trending_up
-                                    </span>
-                                    +12%
-                                </span>
-                            </div>
-                            {/* Sparkline bars */}
-                            <div className="h-16 flex items-end gap-1 px-1">
-                                {[8, 10, 6, 12, 14, 16, 15].map(
-                                    (height, i) => (
-                                        <div
-                                            key={i}
-                                            className={`flex-1 rounded-t-sm ${i >= 4 ? 'bg-secondary' : 'bg-outline-variant/30'}`}
-                                            style={{
-                                                height: `${height * 4}px`,
-                                            }}
-                                        />
-                                    ),
-                                )}
-                            </div>
+                    <FundingTrendCard />
+                    
+                    <div className="mb-8 mt-8">
+                        <h3 className="text-title-sm font-semibold mb-4">Trending by Funding</h3>
+                        <div className="space-y-3">
+                            {trendingByFunding.map(startup => (
+                                <Link href={`/startups/${startup.slug}`} key={startup.id} className="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant cursor-pointer hover:border-primary transition-colors block">
+                                    <div>
+                                        <h4 className="font-semibold text-sm">{startup.name}</h4>
+                                        <p className="text-xs text-on-surface-variant">{startup.sector}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-sm font-bold text-primary">{formatFunding(startup.funding_amount)}</p>
+                                        <p className="text-[10px] uppercase text-on-surface-variant font-bold tracking-wider">{startup.funding_stage}</p>
+                                    </div>
+                                </Link>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Active Sectors */}
-                    <div className="mb-8">
-                        <h4 className="text-label-caps font-mono font-bold text-on-surface-variant mb-4 uppercase tracking-widest">
-                            ACTIVE SECTORS
-                        </h4>
-                        <SectorList
-                            sectors={sectors.slice(0, 3)}
-                            variant="bar"
-                        />
-                    </div>
-
-                    {/* Saved Tags */}
                     <div>
-                        <h4 className="text-label-caps font-mono font-bold text-on-surface-variant mb-4 uppercase tracking-widest">
-                            SAVED TAGS
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                            {[
-                                '#series_a',
-                                '#saas',
-                                '#unicorn_watch',
-                                '#web3',
-                            ].map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="px-3 py-1 bg-surface-container-high text-body-sm font-mono rounded-full border border-outline-variant"
-                                >
-                                    {tag}
-                                </span>
+                        <h3 className="text-title-sm font-semibold mb-4">Top by Upvotes</h3>
+                        <div className="space-y-3">
+                            {topByUpvote.map(startup => (
+                                <Link href={`/startups/${startup.slug}`} key={startup.id} className="flex items-center justify-between p-3 bg-surface rounded-lg border border-outline-variant cursor-pointer hover:border-primary transition-colors block">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex flex-col items-center justify-center w-10 h-10 rounded-md bg-primary/10 text-primary">
+                                            <span className="material-symbols-outlined text-[16px] -mb-1">arrow_drop_up</span>
+                                            <span className="text-xs font-bold leading-none">{startup.upvotes_count || 0}</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-sm">{startup.name}</h4>
+                                            <p className="text-xs text-on-surface-variant">{startup.sector}</p>
+                                        </div>
+                                    </div>
+                                </Link>
                             ))}
                         </div>
                     </div>

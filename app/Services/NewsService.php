@@ -9,58 +9,75 @@ use Illuminate\Support\Facades\Log;
 
 class NewsService
 {
-    protected string $apiKey;
-    protected string $baseUrl = 'https://newsapi.org/v2/everything';
+    protected string $baseUrl = 'https://hacker-news.firebaseio.com/v0';
 
     public function __construct()
     {
-        $this->apiKey = config('services.news_api.key', '');
     }
 
     /**
-     * Fetch news and sync with database.
+     * Fetch news and sync with database using Hacker News API.
      */
-    public function syncNews(string $query = 'startups OR "venture capital" OR "tech startup" OR "funding round" OR "unicorn startup"'): int
+    public function syncNews(): int
     {
-        if (empty($this->apiKey)) {
-            Log::warning('NewsAPI Key is missing. Please add NEWS_API_KEY to your .env file.');
-            return 0;
-        }
-
         try {
-            $response = Http::get($this->baseUrl, [
-                'q' => $query,
-                'language' => 'en',
-                'sortBy' => 'publishedAt',
-                'apiKey' => $this->apiKey,
-                'pageSize' => 100,
-            ]);
+            $response = Http::get("{$this->baseUrl}/topstories.json");
 
             if (!$response->successful()) {
-                Log::error('NewsAPI Error: ' . $response->body());
+                Log::error('Hacker News API Error: Failed to fetch top stories');
                 return 0;
             }
 
-            $articles = $response->json('articles');
+            $storyIds = $response->json();
+            
+            // Limit to top 30 to avoid excessive API calls
+            $topStoryIds = array_slice($storyIds, 0, 30);
+            
             $count = 0;
 
-            foreach ($articles as $item) {
-                // Check if already exists by URL
-                if (NewsArticle::where('url', $item['url'])->exists()) {
+            foreach ($topStoryIds as $id) {
+                $storyResponse = Http::get("{$this->baseUrl}/item/{$id}.json");
+                
+                if (!$storyResponse->successful()) {
+                    continue;
+                }
+                
+                $item = $storyResponse->json();
+                
+                if (!$item || ($item['type'] ?? '') !== 'story' || ($item['deleted'] ?? false) || ($item['dead'] ?? false)) {
                     continue;
                 }
 
-                $publishedAt = Carbon::parse($item['publishedAt']);
+                $url = $item['url'] ?? "https://news.ycombinator.com/item?id={$id}";
+
+                // Check if already exists by URL
+                if (NewsArticle::where('url', $url)->exists()) {
+                    continue;
+                }
+
+                $publishedAt = Carbon::createFromTimestamp($item['time']);
+                $title = $item['title'] ?? 'Untitled';
+                $text = isset($item['text']) ? strip_tags(html_entity_decode($item['text'])) : '';
+
+                // Extract source domain from URL
+                $source = 'Hacker News';
+                if (!empty($item['url'])) {
+                    $parsedUrl = parse_url($item['url']);
+                    if (isset($parsedUrl['host'])) {
+                        $source = str_replace('www.', '', $parsedUrl['host']);
+                    }
+                }
 
                 NewsArticle::create([
-                    'title' => $item['title'],
-                    'excerpt' => $item['description'] ?? $item['content'] ?? '',
-                    'category' => $this->inferCategory($item['title'] . ' ' . ($item['description'] ?? '')),
-                    'source' => $item['source']['name'] ?? 'News',
+                    'title' => $title,
+                    'excerpt' => $text,
+                    'category' => $this->inferCategory($title . ' ' . $text),
+                    'source' => $source,
                     'source_time' => $publishedAt->diffForHumans(),
-                    'thumbnail_url' => $item['urlToImage'],
-                    'url' => $item['url'],
-                    'read_time' => $this->calculateReadTime($item['content'] ?? ''),
+                    'thumbnail_url' => null,
+                    'url' => $url,
+                    'read_time' => $this->calculateReadTime($text),
+                    'score' => $item['score'] ?? 0,
                     'is_featured' => false,
                     'week_number' => $publishedAt->weekOfYear,
                     'year' => $publishedAt->year,

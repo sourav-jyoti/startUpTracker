@@ -33,27 +33,26 @@ class NewsController extends Controller
                       ->orWhere('source', 'like', "%{$search}%");
                 });
             })
-            ->orderByDesc('is_featured')
+            ->orderByDesc('score')
             ->orderByDesc('created_at')
             ->paginate(8)
             ->withQueryString();
 
-        $sectors = Sector::query()
-            ->orderByDesc('percentage')
-            ->limit(6)
+        $trendingByFunding = Startup::query()
+            ->orderByDesc('funding_amount')
+            ->limit(3)
             ->get();
 
-        $availableSectors = Startup::query()
-            ->distinct()
-            ->pluck('sector')
-            ->sort()
-            ->values()
-            ->all();
+        $topByUpvote = Startup::query()
+            ->withCount('upvotes')
+            ->orderByDesc('upvotes_count')
+            ->limit(3)
+            ->get();
 
         return Inertia::render('news/index', [
             'articles' => $articles,
-            'sectors' => $sectors,
-            'availableSectors' => $availableSectors,
+            'trendingByFunding' => $trendingByFunding,
+            'topByUpvote' => $topByUpvote,
             'search' => $searchFilter,
         ]);
     }

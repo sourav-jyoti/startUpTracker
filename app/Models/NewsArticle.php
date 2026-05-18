@@ -23,6 +23,7 @@ class NewsArticle extends Model
         'thumbnail_url',
         'url',
         'read_time',
+        'score',
         'is_featured',
         'week_number',
         'year',
