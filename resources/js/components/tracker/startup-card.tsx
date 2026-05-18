@@ -141,11 +141,7 @@ export default function StartupCard({ startup, onSelect }: StartupCardProps) {
                 </div>
             </div>
             
-            {startup.is_featured && (
-                <div className="absolute top-0 right-0 p-1">
-                    <div className="bg-amber-500 w-2 h-2 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
-                </div>
-            )}
+
         </div>
     );
 }
