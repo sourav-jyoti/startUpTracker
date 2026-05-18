@@ -18,7 +18,7 @@ export default function WeekSelector({
         const params = new URLSearchParams(window.location.search);
         params.set('week', String(week));
         router.get(`${basePath}?${params.toString()}`, {}, {
-            preserveState: false,
+            preserveState: true,
             preserveScroll: true,
         });
     }

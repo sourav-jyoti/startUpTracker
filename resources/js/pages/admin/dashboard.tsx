@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { 
     ShieldCheck, 
     Rocket, 
@@ -163,13 +163,12 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                                                 >
                                                     <Star className={`w-4 h-4 ${startup.is_featured ? 'fill-current' : ''}`} />
                                                 </button>
-                                                <a 
+                                                <Link 
                                                     href={startupRoutes.show.url({ startup: startup.slug })}
-                                                    target="_blank"
                                                     className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
-                                                </a>
+                                                </Link>
                                                 <button 
                                                     onClick={() => deleteStartup(startup.id)}
                                                     className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all"

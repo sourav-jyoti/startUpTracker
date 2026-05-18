@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -80,13 +80,13 @@ export default function Dashboard({ stats, startups, bookmarkedStartups, charts 
                             </p>
                         </div>
                         <div className="flex-shrink-0">
-                            <button 
-                                onClick={() => router.get(startupRoutes.create.url())}
+                            <Link 
+                                href={startupRoutes.create.url()}
                                 className="group bg-primary text-on-primary px-8 py-4 rounded-2xl font-bold flex items-center gap-3 hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
                             >
                                 <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
                                 Submit Startup
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -379,13 +379,13 @@ function EmptyState({ icon, title, description }: { icon: React.ReactNode, title
             <p className="text-body-lg text-on-surface-variant max-w-sm mb-8">
                 {description}
             </p>
-            <button 
-                onClick={() => router.get(startupRoutes.create.url())}
+            <Link 
+                href={startupRoutes.create.url()}
                 className="flex items-center gap-2 text-primary font-bold hover:underline"
             >
                 <Plus className="w-5 h-5" />
                 Submit your first startup
-            </button>
+            </Link>
         </div>
     );
 }
