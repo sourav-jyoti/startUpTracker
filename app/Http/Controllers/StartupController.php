@@ -20,12 +20,17 @@ class StartupController extends Controller
     {
         $weekInput = $request->input('week');
         $isAllWeeks = $weekInput === 'all';
-        $weekNumber = $isAllWeeks ? 'all' : (int) ($weekInput ?? date('W'));
+        $currentWeek = min(10, (int) date('W'));
+        $weekNumber = $isAllWeeks ? 'all' : (int) ($weekInput ?? $currentWeek);
+        if ($weekNumber !== 'all') {
+            $weekNumber = min(10, max(1, $weekNumber));
+        }
         $year = $request->integer('year', (int) date('Y'));
         $sectorFilter = $request->string('sector')->value() ?: null;
         $searchFilter = $request->string('search')->value() ?: null;
 
         $startups = Startup::query()
+            ->withCount('upvotes')
             ->when(! $isAllWeeks && !$searchFilter, function ($query) use ($weekNumber): void {
                 $query->where('week_number', $weekNumber);
             })
@@ -60,15 +65,17 @@ class StartupController extends Controller
             ->all();
 
         /** @var array<int> $weeks */
-        $weeksNum = $isAllWeeks ? (int) date('W') : $weekNumber;
-        $weeks = range(max(1, $weeksNum - 4), min(52, $weeksNum + 4));
+        $weeksNum = $isAllWeeks ? $currentWeek : $weekNumber;
+        $weeks = range(max(1, $weeksNum - 4), min(10, $weeksNum + 4));
 
         /** @var \App\Models\User|null $user */
         $user = $request->user();
         $bookmarkedIds = $user ? $user->bookmarkedStartups()->pluck('startup_id')->toArray() : [];
+        $upvotedIds = $user ? $user->upvotedStartups()->pluck('startup_id')->toArray() : [];
 
-        $startups->each(function ($startup) use ($bookmarkedIds): void {
+        $startups->each(function ($startup) use ($bookmarkedIds, $upvotedIds): void {
             $startup->is_bookmarked = in_array($startup->id, $bookmarkedIds);
+            $startup->is_upvoted = in_array($startup->id, $upvotedIds);
         });
 
         return Inertia::render('startups/index', [
@@ -91,10 +98,13 @@ class StartupController extends Controller
         $startup->load(['fundingRounds' => function ($query): void {
             $query->orderByDesc('date');
         }, 'teamMembers']);
+        
+        $startup->loadCount('upvotes');
 
         /** @var \App\Models\User|null $user */
         $user = $request->user();
         $startup->is_bookmarked = $user ? $user->bookmarkedStartups()->where('startup_id', $startup->id)->exists() : false;
+        $startup->is_upvoted = $user ? $user->upvotedStartups()->where('startup_id', $startup->id)->exists() : false;
 
         return Inertia::render('startups/show', [
             'startup' => $startup,
@@ -127,7 +137,7 @@ class StartupController extends Controller
         $validated = $request->validated();
 
         $validated['slug'] = Str::slug($validated['name']);
-        $validated['week_number'] = $request->integer('week_number', (int) date('W'));
+        $validated['week_number'] = min(10, max(1, $request->integer('week_number', min(10, (int) date('W')))));
         $validated['year'] = (int) date('Y');
         $validated['user_id'] = $request->user()?->id;
         $validated['total_funding'] = $validated['funding_amount'] ?? 0;

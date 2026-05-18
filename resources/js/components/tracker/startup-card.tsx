@@ -1,7 +1,8 @@
 import { router } from '@inertiajs/react';
-import { Bookmark, BookmarkCheck, Rocket } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Rocket, ChevronUp } from 'lucide-react';
 import type { Startup } from '@/types';
 import bookmarks from '@/routes/bookmarks';
+import upvotes from '@/routes/upvotes';
 
 interface StartupCardProps {
     startup: Startup;
@@ -47,10 +48,23 @@ export default function StartupCard({ startup, onSelect }: StartupCardProps) {
         });
     };
 
+    const toggleUpvote = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.post(upvotes.toggle.url({ startup: startup.id }), {}, {
+            preserveScroll: true,
+        });
+    };
+
     return (
         <div
             className="bg-surface-container-lowest border border-outline-variant p-6 rounded-2xl hover:shadow-lg hover:shadow-primary/5 transition-all group cursor-pointer relative flex flex-col h-full"
-            onClick={() => onSelect?.(startup)}
+            onClick={() => {
+                if (onSelect) {
+                    onSelect(startup);
+                } else {
+                    router.get(`/startups/${startup.slug}`);
+                }
+            }}
         >
             <div className="flex items-start justify-between mb-6">
                 <div className="w-16 h-16 bg-surface-container rounded-2xl overflow-hidden flex items-center justify-center border border-outline-variant/30 flex-shrink-0 shadow-inner group-hover:bg-primary/5 transition-colors">
@@ -64,18 +78,31 @@ export default function StartupCard({ startup, onSelect }: StartupCardProps) {
                         <Rocket className="w-8 h-8 text-primary opacity-40 group-hover:opacity-100 transition-opacity" />
                     )}
                 </div>
-                <button
-                    className={`transition-all flex-shrink-0 p-2.5 rounded-xl hover:bg-surface-container-high active:scale-90 ${
-                        startup.is_bookmarked ? 'text-primary bg-primary/10' : 'text-on-surface-variant bg-surface-container'
-                    }`}
-                    onClick={toggleBookmark}
-                >
-                    {startup.is_bookmarked ? (
-                        <BookmarkCheck className="w-5 h-5 fill-current" />
-                    ) : (
-                        <Bookmark className="w-5 h-5" />
-                    )}
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        className={`transition-all flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-body-sm font-bold active:scale-95 border cursor-pointer ${
+                            startup.is_upvoted
+                                ? 'text-white bg-primary hover:bg-primary/90 border-primary shadow-sm shadow-primary/20'
+                                : 'text-on-surface bg-surface hover:bg-surface-container-high border-outline-variant hover:border-outline-variant/80'
+                        }`}
+                        onClick={toggleUpvote}
+                    >
+                        <ChevronUp className={`w-4 h-4 transition-transform group-hover/upvote:-translate-y-0.5 ${startup.is_upvoted ? 'stroke-[3px]' : ''}`} />
+                        <span>{startup.upvotes_count ?? 0}</span>
+                    </button>
+                    <button
+                        className={`transition-all flex-shrink-0 p-2.5 rounded-xl hover:bg-surface-container-high active:scale-90 border cursor-pointer ${
+                            startup.is_bookmarked ? 'text-primary bg-primary/10 border-primary/20' : 'text-on-surface-variant bg-surface-container border-transparent'
+                        }`}
+                        onClick={toggleBookmark}
+                    >
+                        {startup.is_bookmarked ? (
+                            <BookmarkCheck className="w-5 h-5 fill-current" />
+                        ) : (
+                            <Bookmark className="w-5 h-5" />
+                        )}
+                    </button>
+                </div>
             </div>
 
             <div className="flex-1">

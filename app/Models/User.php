@@ -50,4 +50,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Startup::class, 'bookmarks');
     }
+
+    /**
+     * @return BelongsToMany<Startup, $this>
+     */
+    public function upvotedStartups(): BelongsToMany
+    {
+        return $this->belongsToMany(Startup::class, 'upvotes');
+    }
 }

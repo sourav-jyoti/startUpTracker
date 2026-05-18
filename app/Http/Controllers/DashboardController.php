@@ -18,8 +18,17 @@ class DashboardController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        $startups = $user->startups()->orderByDesc('created_at')->get();
-        $bookmarkedStartups = $user->bookmarkedStartups()->with(['fundingRounds', 'teamMembers'])->get();
+        $upvotedIds = $user->upvotedStartups()->pluck('startup_id')->toArray();
+
+        $startups = $user->startups()->withCount('upvotes')->orderByDesc('created_at')->get();
+        $startups->each(function ($startup) use ($upvotedIds) {
+            $startup->is_upvoted = in_array($startup->id, $upvotedIds);
+        });
+
+        $bookmarkedStartups = $user->bookmarkedStartups()
+            ->withCount('upvotes')
+            ->with(['fundingRounds', 'teamMembers'])
+            ->get();
 
         // Calculate statistics
         $stats = [
@@ -31,10 +40,16 @@ class DashboardController extends Controller
 
         // Funding trends (last 6 submissions or months)
         $fundingTrends = $user->startups()
-            ->selectRaw("DATE_FORMAT(created_at, '%b %d') as date, funding_amount as amount")
+            ->select(['created_at', 'funding_amount'])
             ->orderBy('created_at', 'asc')
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(function ($startup) {
+                return [
+                    'date' => $startup->created_at ? $startup->created_at->format('M d') : '',
+                    'amount' => $startup->funding_amount,
+                ];
+            });
 
         // Sector breakdown
         $sectorBreakdown = $user->startups()
@@ -45,8 +60,9 @@ class DashboardController extends Controller
         return Inertia::render('dashboard', [
             'stats' => $stats,
             'startups' => $startups,
-            'bookmarkedStartups' => $bookmarkedStartups->map(function ($startup) {
+            'bookmarkedStartups' => $bookmarkedStartups->map(function ($startup) use ($upvotedIds) {
                 $startup->is_bookmarked = true;
+                $startup->is_upvoted = in_array($startup->id, $upvotedIds);
                 return $startup;
             }),
             'charts' => [
