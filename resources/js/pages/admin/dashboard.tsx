@@ -5,6 +5,8 @@ import {
     Star, 
     Trash2, 
     ExternalLink,
+    Edit,
+    UserPlus,
     CheckCircle2,
     XCircle,
     LayoutDashboard,
@@ -61,6 +63,22 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                             Administrative Console
                         </h1>
                         <p className="text-body-base text-on-surface-variant">Review and manage platform submissions.</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/admin/users"
+                            className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-2 rounded-xl font-bold hover:bg-surface-container transition-colors"
+                        >
+                            <Users className="w-5 h-5" />
+                            Manage Users
+                        </Link>
+                        <Link
+                            href="/admin/startups/create"
+                            className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-colors"
+                        >
+                            <Rocket className="w-5 h-5" />
+                            Add Startup
+                        </Link>
                     </div>
                 </div>
 
