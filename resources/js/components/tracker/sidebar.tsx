@@ -11,7 +11,7 @@ const authNavItems = [
 
 const footerItems = [
     { name: 'Settings', icon: 'settings', href: '/settings/profile' },
-    { name: 'Support', icon: 'help', href: '#' },
+    { name: 'Support', icon: 'help', href: '/support' },
 ];
 
 export default function Sidebar() {
