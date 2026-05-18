@@ -85,4 +85,12 @@ class Startup extends Model
     {
         return $this->belongsToMany(User::class, 'bookmarks');
     }
+
+    /**
+     * @return BelongsToMany<User, $this>
+     */
+    public function upvotes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'upvotes');
+    }
 }

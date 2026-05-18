@@ -35,7 +35,7 @@ class StoreStartupRequest extends FormRequest
             'competition' => ['nullable', 'string', 'max:255'],
             'registration_type' => ['nullable', 'string', 'max:255'],
             'certificate_number' => ['nullable', 'string', 'max:255'],
-            'week_number' => ['nullable', 'integer', 'min:1', 'max:52'],
+            'week_number' => ['nullable', 'integer', 'min:1', 'max:10'],
         ];
     }
 }

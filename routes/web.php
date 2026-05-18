@@ -5,6 +5,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\StartupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\UpvoteController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -39,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/startups/create', [StartupController::class, 'create'])->name('startups.create');
     Route::post('/startups', [StartupController::class, 'store'])->name('startups.store');
     Route::post('/startups/{startup}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
+    Route::post('/startups/{startup}/upvote', [UpvoteController::class, 'toggle'])->name('upvotes.toggle');
 });
 
 // API Search

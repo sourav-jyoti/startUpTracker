@@ -41,6 +41,8 @@ export type Startup = {
     total_funding: string;
     is_featured: boolean;
     is_bookmarked?: boolean;
+    is_upvoted?: boolean;
+    upvotes_count?: number;
     week_number: number;
     year: number;
     funding_rounds?: FundingRound[];

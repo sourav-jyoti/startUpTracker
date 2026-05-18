@@ -10,11 +10,13 @@ import {
     User,
     ChevronRight,
     X,
-    Rocket
+    Rocket,
+    ChevronUp
 } from 'lucide-react';
 import { formatFunding, formatStage } from '@/components/tracker/startup-card';
 import type { Startup } from '@/types';
 import bookmarks from '@/routes/bookmarks';
+import upvotes from '@/routes/upvotes';
 
 interface StartupDetailModalProps {
     startup: Startup;
@@ -28,6 +30,13 @@ export default function StartupDetailModal({
     const toggleBookmark = (e: React.MouseEvent) => {
         e.stopPropagation();
         router.post(bookmarks.toggle.url({ startup: startup.id }), {}, {
+            preserveScroll: true,
+        });
+    };
+
+    const toggleUpvote = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.post(upvotes.toggle.url({ startup: startup.id }), {}, {
             preserveScroll: true,
         });
     };
@@ -74,22 +83,35 @@ export default function StartupDetailModal({
                         )}
                     </div>
 
-                    <div className="flex items-start justify-between mb-2">
-                        <h2 className="text-display-lg font-bold">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                        <h2 className="text-display-lg font-bold leading-tight">
                             {startup.name}
                         </h2>
-                        <button
-                            className={`transition-all p-2 rounded-full hover:bg-surface-container-high active:scale-90 ${
-                                startup.is_bookmarked ? 'text-primary' : 'text-on-surface-variant'
-                            }`}
-                            onClick={toggleBookmark}
-                        >
-                            {startup.is_bookmarked ? (
-                                <BookmarkCheck className="w-6 h-6 fill-current" />
-                            ) : (
-                                <Bookmark className="w-6 h-6" />
-                            )}
-                        </button>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                            <button
+                                className={`transition-all flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-body-sm font-bold active:scale-95 border cursor-pointer ${
+                                    startup.is_upvoted
+                                        ? 'text-white bg-primary hover:bg-primary/90 border-primary shadow-sm shadow-primary/20'
+                                        : 'text-on-surface bg-surface hover:bg-surface-container-high border-outline-variant hover:border-outline-variant/80'
+                                }`}
+                                onClick={toggleUpvote}
+                            >
+                                <ChevronUp className={`w-4 h-4 transition-transform ${startup.is_upvoted ? 'stroke-[3px]' : ''}`} />
+                                <span>{startup.upvotes_count ?? 0}</span>
+                            </button>
+                            <button
+                                className={`transition-all p-2 rounded-full hover:bg-surface-container-high active:scale-90 border border-transparent cursor-pointer ${
+                                    startup.is_bookmarked ? 'text-primary' : 'text-on-surface-variant'
+                                }`}
+                                onClick={toggleBookmark}
+                            >
+                                {startup.is_bookmarked ? (
+                                    <BookmarkCheck className="w-6 h-6 fill-current" />
+                                ) : (
+                                    <Bookmark className="w-6 h-6" />
+                                )}
+                            </button>
+                        </div>
                     </div>
 
                     {/* Badges */}

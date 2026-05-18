@@ -27,7 +27,7 @@ export default function WeekSelector({
         if (currentWeek === 'all') return;
         const target = currentWeek + direction;
 
-        if (target >= 1 && target <= 52) {
+        if (target >= 1 && target <= 10) {
             navigateToWeek(target);
         }
     }
@@ -46,7 +46,7 @@ export default function WeekSelector({
                     </button>
                     <button
                         onClick={() => handleShift(1)}
-                        disabled={currentWeek === 'all' || currentWeek >= 52}
+                        disabled={currentWeek === 'all' || currentWeek >= 10}
                         className="p-1 hover:bg-surface-container-high rounded-full transition-colors disabled:opacity-30"
                     >
                         <span className="material-symbols-outlined">chevron_right</span>

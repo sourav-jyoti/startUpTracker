@@ -25,7 +25,7 @@ export default function StartupsIndex({
     const [selectedStartup, setSelectedStartup] = useState<Startup | null>(null);
 
     function handleSelectStartup(startup: Startup) {
-        router.get(`/startups/${startup.id}`, {}, {
+        router.get(`/startups/${startup.slug}`, {}, {
             preserveState: true, preserveScroll: true, only: ['startup'],
             onSuccess: (page) => {
                 const data = page.props as unknown as { startup: Startup };

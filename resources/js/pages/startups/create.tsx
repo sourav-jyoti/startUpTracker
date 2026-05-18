@@ -234,15 +234,15 @@ export default function CreateStartup({ availableSectors }: Props) {
 
                                             <div className="grid gap-2">
                                                 <Label htmlFor="week_number" className="text-label-caps font-mono font-bold uppercase text-on-surface-variant">
-                                                    Week Number (1-52)
+                                                    Week Number (1-10)
                                                 </Label>
                                                 <Input
                                                     id="week_number"
                                                     type="number"
                                                     name="week_number"
                                                     min="1"
-                                                    max="52"
-                                                    defaultValue={Math.ceil((new Date().getTime() - new Date(new Date().getFullYear(), 0, 1).getTime()) / 604800000)}
+                                                    max="10"
+                                                    defaultValue={Math.min(10, Math.ceil((new Date().getTime() - new Date(new Date().getFullYear(), 0, 1).getTime()) / 604800000))}
                                                     placeholder="Default: Current Week"
                                                     className="bg-surface-container-low border-outline-variant rounded-lg font-mono"
                                                 />
