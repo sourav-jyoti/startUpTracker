@@ -45,9 +45,11 @@ function Button({
     asChild?: boolean
   }) {
   const Comp = asChild ? Slot : "button"
+  const defaultType = asChild ? undefined : (props.type || "button")
 
   return (
     <Comp
+      type={defaultType as any}
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
