@@ -16,8 +16,12 @@ class StartupController extends Controller
     /**
      * Display the home page with startups feed and analytics.
      */
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
+        if ($request->user() && $request->user()->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+
         $weekInput = $request->input('week');
         $isAllWeeks = $weekInput === 'all';
         $currentWeek = min(10, (int) date('W'));
@@ -84,6 +88,108 @@ class StartupController extends Controller
             $startup->is_upvoted = in_array($startup->id, $upvotedIds);
         });
 
+        // User specific dashboard data
+        $userStartups = collect();
+        $bookmarkedStartups = collect();
+        if ($user) {
+            $userStartups = $user->startups()->withCount('upvotes')->orderByDesc('created_at')->get();
+            $userStartups->each(function ($startup) use ($upvotedIds, $bookmarkedIds) {
+                $startup->is_upvoted = in_array($startup->id, $upvotedIds);
+                $startup->is_bookmarked = in_array($startup->id, $bookmarkedIds);
+            });
+
+            $bookmarkedStartups = $user->bookmarkedStartups()
+                ->withCount('upvotes')
+                ->with(['fundingRounds', 'teamMembers'])
+                ->get()
+                ->map(function ($startup) use ($upvotedIds) {
+                    $startup->is_bookmarked = true;
+                    $startup->is_upvoted = in_array($startup->id, $upvotedIds);
+                    return $startup;
+                });
+        }
+
+        // Stats calculation
+        $hasSubmissions = $userStartups->isNotEmpty();
+        $hasBookmarks = $bookmarkedStartups->isNotEmpty();
+        if ($hasSubmissions) {
+            $stats = [
+                'total_submissions' => $userStartups->count(),
+                'total_submissions_title' => 'My Submissions',
+                'total_submissions_subtitle' => 'Startups listed',
+                'total_funding' => $userStartups->sum('funding_amount'),
+                'total_funding_title' => 'Total Value',
+                'total_funding_subtitle' => 'Aggregate funding',
+                'featured_count' => $userStartups->where('is_featured', true)->count(),
+                'featured_title' => 'Featured',
+                'featured_subtitle' => 'Premium status',
+                'watchlist_count' => $bookmarkedStartups->count(),
+                'watchlist_title' => 'Watchlist',
+                'watchlist_subtitle' => 'Saved for later',
+            ];
+        } elseif ($hasBookmarks) {
+            $stats = [
+                'total_submissions' => Startup::count(),
+                'total_submissions_title' => 'Platform Base',
+                'total_submissions_subtitle' => 'Ecosystem startups',
+                'total_funding' => $bookmarkedStartups->sum('funding_amount'),
+                'total_funding_title' => 'Watchlist Value',
+                'total_funding_subtitle' => 'Total tracked funding',
+                'featured_count' => $bookmarkedStartups->where('is_featured', true)->count(),
+                'featured_title' => 'Featured Tracked',
+                'featured_subtitle' => 'Watchlist featured',
+                'watchlist_count' => $bookmarkedStartups->count(),
+                'watchlist_title' => 'Watchlist',
+                'watchlist_subtitle' => 'Saved for later',
+            ];
+        } else {
+            $stats = [
+                'total_submissions' => Startup::count(),
+                'total_submissions_title' => 'Platform Base',
+                'total_submissions_subtitle' => 'Ecosystem startups',
+                'total_funding' => Startup::sum('funding_amount'),
+                'total_funding_title' => 'Ecosystem Value',
+                'total_funding_subtitle' => 'Global aggregate funding',
+                'featured_count' => Startup::where('is_featured', true)->count(),
+                'featured_title' => 'Featured',
+                'featured_subtitle' => 'Ecosystem premium',
+                'watchlist_count' => 0,
+                'watchlist_title' => 'Watchlist',
+                'watchlist_subtitle' => 'No saved startups yet',
+            ];
+        }
+
+        // Portfolio IDs for analytics
+        $portfolioStartupIds = $userStartups->pluck('id')
+            ->merge($bookmarkedIds)
+            ->unique()
+            ->filter();
+
+        if ($portfolioStartupIds->isNotEmpty()) {
+            $analyticsQuery = Startup::whereIn('id', $portfolioStartupIds);
+        } else {
+            $analyticsQuery = Startup::query();
+        }
+
+        // Funding trends (last 10 startups)
+        $fundingTrends = (clone $analyticsQuery)
+            ->select(['created_at', 'funding_amount'])
+            ->orderBy('created_at', 'asc')
+            ->limit(10)
+            ->get()
+            ->map(function ($startup) {
+                return [
+                    'date' => $startup->created_at ? $startup->created_at->format('M d') : '',
+                    'amount' => (float) $startup->funding_amount,
+                ];
+            });
+
+        // Sector breakdown
+        $sectorBreakdown = (clone $analyticsQuery)
+            ->selectRaw('sector as name, COUNT(*) as count')
+            ->groupBy('sector')
+            ->get();
+
         return Inertia::render('startups/index', [
             'startups' => $startups,
             'trendingByFunding' => $trendingByFunding,
@@ -94,6 +200,14 @@ class StartupController extends Controller
             'currentWeek' => $weekNumber,
             'currentYear' => $year,
             'weeks' => $weeks,
+            // Merged User Dashboard Data
+            'userStartups' => $userStartups,
+            'bookmarkedStartups' => $bookmarkedStartups,
+            'stats' => $stats,
+            'charts' => [
+                'fundingTrends' => $fundingTrends,
+                'sectorBreakdown' => $sectorBreakdown,
+            ],
         ]);
     }
 

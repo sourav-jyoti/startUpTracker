@@ -16,6 +16,14 @@ class SupportController extends Controller
     public function index(Request $request): Response
     {
         $user = $request->user();
+        
+        $tickets = [];
+        if ($user) {
+            $tickets = SupportMessage::where('user_id', $user->id)
+                ->orWhere('email', $user->email)
+                ->orderByDesc('created_at')
+                ->get();
+        }
 
         return Inertia::render('support', [
             'initialUser' => $user ? [
@@ -23,6 +31,7 @@ class SupportController extends Controller
                 'email' => $user->email,
             ] : null,
             'status' => $request->session()->get('status'),
+            'tickets' => $tickets,
         ]);
     }
 

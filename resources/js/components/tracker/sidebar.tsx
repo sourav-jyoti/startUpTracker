@@ -1,10 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
 
-const navItems = [
-    { name: 'Home', icon: 'home', href: '/' },
-    { name: 'News', icon: 'newspaper', href: '/news' },
-];
-
 const authNavItems = [
     { name: 'Add Startup', icon: 'add_circle', href: '/startups/create' },
 ];
@@ -18,12 +13,34 @@ export default function Sidebar() {
     const { url, props } = usePage();
     const user = props.auth?.user ?? null;
 
+    const navItems = [
+        { name: 'Explore', icon: 'explore', href: '/' },
+        ...(user ? [
+            { name: 'Submissions', icon: 'rocket_launch', href: '/?tab=submissions' },
+            { name: 'Watchlist', icon: 'bookmark', href: '/?tab=watchlist' },
+        ] : []),
+        { name: 'Analytics', icon: 'monitoring', href: '/?tab=analytics' },
+        { name: 'News', icon: 'newspaper', href: '/news' },
+    ];
+
     function isActive(href: string): boolean {
-        if (href === '/') {
-            return url === '/' || (url.startsWith('/startups') && !url.startsWith('/startups/create'));
+        // Parse current page URL and its tab parameter
+        const cleanUrl = url.startsWith('/') ? url : '/' + url;
+        const currentUrlObj = new URL(cleanUrl, 'http://localhost');
+        const currentTab = currentUrlObj.searchParams.get('tab') || 'explore';
+        const currentPath = currentUrlObj.pathname;
+
+        // Parse item href
+        const targetUrlObj = new URL(href, 'http://localhost');
+        const targetTab = targetUrlObj.searchParams.get('tab') || 'explore';
+        const targetPath = targetUrlObj.pathname;
+
+        if (targetPath === '/') {
+            // Under root path, both path and tab parameter must match
+            return (currentPath === '/' || (currentPath.startsWith('/startups') && !currentPath.startsWith('/startups/create'))) && currentTab === targetTab;
         }
 
-        return url.startsWith(href);
+        return currentPath.startsWith(targetPath);
     }
 
     return (

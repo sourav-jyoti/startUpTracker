@@ -114,11 +114,11 @@ export default function CommandPalette() {
 
                                 <Command.Group heading="Navigation" className="text-label-caps font-mono font-bold text-on-surface-variant px-3 py-2 opacity-50 mt-4">
                                     <Command.Item
-                                        onSelect={() => runCommand(() => router.get('/dashboard'))}
+                                        onSelect={() => runCommand(() => router.visit('/?tab=analytics'))}
                                         className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-surface-container-high cursor-pointer transition-colors aria-selected:bg-surface-container-high"
                                     >
                                         <LayoutDashboard className="w-4 h-4" />
-                                        <span className="text-body-sm">Dashboard</span>
+                                        <span className="text-body-sm">Analytics</span>
                                     </Command.Item>
                                     <Command.Item
                                         onSelect={() => runCommand(() => router.get('/'))}
