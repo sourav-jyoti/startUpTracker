@@ -8,9 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewStartupAdded extends Notification implements ShouldQueue
+class NewStartupAdded extends Notification
 {
-    use Queueable;
 
     public $startup;
 

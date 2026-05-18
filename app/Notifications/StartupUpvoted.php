@@ -9,9 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class StartupUpvoted extends Notification implements ShouldQueue
+class StartupUpvoted extends Notification
 {
-    use Queueable;
 
     public $startup;
     public $upvoter;

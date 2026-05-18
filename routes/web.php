@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/startups/{startup}', [StartupController::class, 'destroy'])->name('startups.destroy')->can('delete', 'startup');
     Route::post('/startups/{startup}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
     Route::post('/startups/{startup}/upvote', [UpvoteController::class, 'toggle'])->name('upvotes.toggle');
+    Route::get('/dashboard', [StartupController::class, 'index'])->name('dashboard');
 });
 
 // API Search

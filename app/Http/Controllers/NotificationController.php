@@ -12,7 +12,7 @@ class NotificationController extends Controller
     public function index(Request $request)
     {
         return response()->json(
-            $request->user()->unreadNotifications()->latest()->take(20)->get()
+            $request->user()->notifications()->latest()->take(20)->get()
         );
     }
 
