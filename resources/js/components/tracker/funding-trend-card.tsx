@@ -19,7 +19,7 @@ const chartData: DataPoint[] = [
 const maxValue = Math.max(...chartData.map((d) => d.value));
 const chartW = 300;
 const chartH = 100;
-const padding = 5;
+const padding = 15;
 
 function getX(i: number): number {
     return padding + (i / (chartData.length - 1)) * (chartW - padding * 2);
@@ -81,13 +81,13 @@ export default function FundingTrendCard() {
                     {/* Gradient def */}
                     <defs>
                         <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#006c49" />
-                            <stop offset="100%" stopColor="#006c49" stopOpacity="0" />
+                            <stop offset="0%" stopColor="var(--color-primary)" />
+                            <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
                         </linearGradient>
                     </defs>
 
                     {/* Main line */}
-                    <path d={buildPath()} fill="none" stroke="#006c49"
+                    <path d={buildPath()} fill="none" stroke="var(--color-primary)"
                         strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                         style={{ vectorEffect: 'non-scaling-stroke' }} />
 
@@ -103,8 +103,8 @@ export default function FundingTrendCard() {
                             {/* Visible dot */}
                             <circle cx={getX(i)} cy={getY(d.value)}
                                 r={hovered === i ? 5 : 3}
-                                fill={hovered === i ? '#006c49' : '#ffffff'}
-                                stroke="#006c49" strokeWidth="2"
+                                fill={hovered === i ? 'var(--color-primary)' : '#ffffff'}
+                                stroke="var(--color-primary)" strokeWidth="2"
                                 style={{
                                     transition: 'r 0.15s ease, fill 0.15s ease',
                                     vectorEffect: 'non-scaling-stroke',
@@ -115,7 +115,7 @@ export default function FundingTrendCard() {
                             {hovered === i && (
                                 <line x1={getX(i)} y1={getY(d.value)}
                                     x2={getX(i)} y2={chartH}
-                                    stroke="#006c49" strokeWidth="1" strokeDasharray="3"
+                                    stroke="var(--color-primary)" strokeWidth="1" strokeDasharray="3"
                                     opacity="0.4"
                                     style={{ vectorEffect: 'non-scaling-stroke' }} />
                             )}
