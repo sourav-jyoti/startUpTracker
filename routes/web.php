@@ -7,7 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\UpvoteController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -55,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
 
 // API Search
 Route::get('/api/search', [StartupController::class, 'search'])->name('api.search');
+
+// Support routes
+Route::get('/support', [SupportController::class, 'index'])->name('support.index');
+Route::post('/support', [SupportController::class, 'store'])->name('support.store');
 
 // Public startup detail route (must be last due to wildcard)
 Route::get('/startups/{startup:slug}', [StartupController::class, 'show'])->name('startups.show');

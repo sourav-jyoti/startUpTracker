@@ -31,7 +31,7 @@ class StartupController extends Controller
 
         $startups = Startup::query()
             ->withCount('upvotes')
-            ->when(! $isAllWeeks && !$searchFilter, function ($query) use ($weekNumber): void {
+            ->when(!$isAllWeeks && !$searchFilter, function ($query) use ($weekNumber): void {
                 $query->where('week_number', $weekNumber);
             })
             ->when($sectorFilter, function ($query, string $sector): void {
@@ -40,20 +40,26 @@ class StartupController extends Controller
             ->when($searchFilter, function ($query, string $search): void {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('sector', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%")
-                      ->orWhereHas('teamMembers', function ($sq) use ($search) {
-                          $sq->where('name', 'like', "%{$search}%");
-                      });
+                        ->orWhere('sector', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhereHas('teamMembers', function ($sq) use ($search) {
+                            $sq->where('name', 'like', "%{$search}%");
+                        });
                 });
             })
             ->orderByDesc('is_featured')
             ->orderByDesc('funding_amount')
             ->get();
 
-        $sectors = Sector::query()
-            ->orderByDesc('percentage')
-            ->limit(6)
+        $trendingByFunding = Startup::query()
+            ->orderByDesc('funding_amount')
+            ->limit(3)
+            ->get();
+
+        $topByUpvote = Startup::query()
+            ->withCount('upvotes')
+            ->orderByDesc('upvotes_count')
+            ->limit(3)
             ->get();
 
         /** @var list<string> $availableSectors */
@@ -66,7 +72,7 @@ class StartupController extends Controller
 
         /** @var array<int> $weeks */
         $weeksNum = $isAllWeeks ? $currentWeek : $weekNumber;
-        $weeks = range(max(1, $weeksNum - 4), min(10, $weeksNum + 4));
+        $weeks = range(1, 10);
 
         /** @var \App\Models\User|null $user */
         $user = $request->user();
@@ -80,7 +86,8 @@ class StartupController extends Controller
 
         return Inertia::render('startups/index', [
             'startups' => $startups,
-            'sectors' => $sectors,
+            'trendingByFunding' => $trendingByFunding,
+            'topByUpvote' => $topByUpvote,
             'availableSectors' => $availableSectors,
             'activeSector' => $sectorFilter,
             'search' => $searchFilter,
@@ -95,10 +102,13 @@ class StartupController extends Controller
      */
     public function show(Request $request, Startup $startup): Response
     {
-        $startup->load(['fundingRounds' => function ($query): void {
-            $query->orderByDesc('date');
-        }, 'teamMembers']);
-        
+        $startup->load([
+            'fundingRounds' => function ($query): void {
+                $query->orderByDesc('date');
+            },
+            'teamMembers'
+        ]);
+
         $startup->loadCount('upvotes');
 
         /** @var \App\Models\User|null $user */
@@ -153,8 +163,9 @@ class StartupController extends Controller
     public function search(Request $request)
     {
         $q = $request->query('q');
-        if (!$q) return response()->json([]);
-        
+        if (!$q)
+            return response()->json([]);
+
         return Startup::where('name', 'like', "%{$q}%")
             ->orWhere('sector', 'like', "%{$q}%")
             ->orWhere('description', 'like', "%{$q}%")

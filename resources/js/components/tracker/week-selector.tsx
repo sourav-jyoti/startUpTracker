@@ -18,7 +18,7 @@ export default function WeekSelector({
         const params = new URLSearchParams(window.location.search);
         params.set('week', String(week));
         router.get(`${basePath}?${params.toString()}`, {}, {
-            preserveState: false,
+            preserveState: true,
             preserveScroll: true,
         });
     }
@@ -57,8 +57,8 @@ export default function WeekSelector({
                 <button
                     onClick={() => navigateToWeek('all')}
                     className={`flex-shrink-0 px-6 py-2 text-label-caps font-mono font-bold uppercase transition-colors cursor-pointer ${currentWeek === 'all'
-                            ? 'border-b-2 border-primary text-primary'
-                            : 'text-on-surface-variant/60 hover:text-primary hover:border-b-2 hover:border-outline-variant'
+                        ? 'border-b-2 border-primary text-primary'
+                        : 'text-on-surface-variant/60 hover:text-primary hover:border-b-2 hover:border-outline-variant'
                         }`}
                 >
                     ALL
@@ -68,8 +68,8 @@ export default function WeekSelector({
                         key={week}
                         onClick={() => navigateToWeek(week)}
                         className={`flex-shrink-0 px-6 py-2 text-label-caps font-mono font-bold uppercase transition-colors cursor-pointer ${week === currentWeek
-                                ? 'border-b-2 border-primary text-primary'
-                                : 'text-on-surface-variant/60 hover:text-primary hover:border-b-2 hover:border-outline-variant'
+                            ? 'border-b-2 border-primary text-primary'
+                            : 'text-on-surface-variant/60 hover:text-primary hover:border-b-2 hover:border-outline-variant'
                             }`}
                     >
                         WEEK {String(week).padStart(2, '0')}

@@ -181,18 +181,11 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                                                 >
                                                     <Star className={`w-4 h-4 ${startup.is_featured ? 'fill-current' : ''}`} />
                                                 </button>
-                                                <a 
-                                                    href={startupRoutes.show.url({ startup: startup.slug as any })}
-                                                    target="_blank"
+                                                <Link 
+                                                    href={startupRoutes.show.url({ startup: startup.slug })}
                                                     className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
-                                                </a>
-                                                <Link
-                                                    href={`/admin/startups/${startup.id}/edit`}
-                                                    className="p-2 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded-lg transition-all"
-                                                >
-                                                    <Edit className="w-4 h-4" />
                                                 </Link>
                                                 <button 
                                                     onClick={() => deleteStartup(startup.id)}

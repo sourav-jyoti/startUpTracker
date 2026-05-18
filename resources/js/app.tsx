@@ -19,6 +19,7 @@ createInertiaApp({
             case name.startsWith('settings/'):
                 return [AppLayout, SettingsLayout];
             case name === 'dashboard':
+            case name === 'support':
             case name.startsWith('admin/'):
             case name.startsWith('startups/'):
             case name.startsWith('news/'):
