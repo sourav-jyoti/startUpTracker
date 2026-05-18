@@ -63,6 +63,16 @@ class Startup extends Model
     }
 
     /**
+     * @return BelongsToMany<User, $this>
+     */
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'startup_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
      * @return HasMany<FundingRound, $this>
      */
     public function fundingRounds(): HasMany

@@ -49,6 +49,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::middleware(['auth'])->group(function () {
     Route::get('/startups/create', [StartupController::class, 'create'])->name('startups.create');
     Route::post('/startups', [StartupController::class, 'store'])->name('startups.store');
+    Route::get('/startups/{startup}/edit', [StartupController::class, 'edit'])->name('startups.edit')->can('update', 'startup');
+    Route::put('/startups/{startup}', [StartupController::class, 'update'])->name('startups.update')->can('update', 'startup');
+    Route::delete('/startups/{startup}', [StartupController::class, 'destroy'])->name('startups.destroy')->can('delete', 'startup');
     Route::post('/startups/{startup}/bookmark', [BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
     Route::post('/startups/{startup}/upvote', [UpvoteController::class, 'toggle'])->name('upvotes.toggle');
 });

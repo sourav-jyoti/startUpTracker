@@ -1,11 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
-import {
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
+import { LogOut, Settings, HelpCircle } from 'lucide-react';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
@@ -26,38 +20,46 @@ export function UserMenuContent({ user }: Props) {
 
     return (
         <>
-            <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} />
-                </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link
-                        className="block w-full cursor-pointer"
-                        href={edit()}
-                        prefetch
-                        onClick={cleanup}
-                    >
-                        <Settings className="mr-2" />
-                        Settings
-                    </Link>
-                </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            {/* User info header */}
+            <div className="flex items-center gap-2 px-3 py-2 text-left text-sm border-b border-outline-variant">
+                <UserInfo user={user} showEmail={true} />
+            </div>
+
+            {/* Menu items */}
+            <div className="py-1">
                 <Link
-                    className="block w-full cursor-pointer"
+                    href={edit()}
+                    prefetch
+                    onClick={cleanup}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-on-surface hover:bg-surface-container transition-colors"
+                >
+                    <Settings size={16} />
+                    Settings
+                </Link>
+                <Link
+                    href="/support"
+                    prefetch
+                    onClick={cleanup}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-on-surface hover:bg-surface-container transition-colors"
+                >
+                    <HelpCircle size={16} />
+                    Support
+                </Link>
+            </div>
+
+            {/* Logout */}
+            <div className="border-t border-outline-variant py-1">
+                <Link
                     href={logout()}
                     as="button"
                     onClick={handleLogout}
                     data-test="logout-button"
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm text-error hover:bg-error/10 transition-colors"
                 >
-                    <LogOut className="mr-2" />
+                    <LogOut size={16} />
                     Log out
                 </Link>
-            </DropdownMenuItem>
+            </div>
         </>
     );
 }

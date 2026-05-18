@@ -4,11 +4,6 @@ const authNavItems = [
     { name: 'Add Startup', icon: 'add_circle', href: '/startups/create' },
 ];
 
-const footerItems = [
-    { name: 'Settings', icon: 'settings', href: '/settings/profile' },
-    { name: 'Support', icon: 'help', href: '/support' },
-];
-
 export default function Sidebar() {
     const { url, props } = usePage();
     const user = props.auth?.user ?? null;
@@ -117,24 +112,6 @@ export default function Sidebar() {
                     </>
                 )}
             </nav>
-
-            {/* Footer */}
-            <div className="mt-auto space-y-1 pt-6 border-t border-outline-variant">
-                {footerItems.map((item) => (
-                    <Link
-                        key={item.name}
-                        href={item.href}
-                        className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all rounded-lg"
-                    >
-                        <span className="material-symbols-outlined">
-                            {item.icon}
-                        </span>
-                        <span className="text-label-caps font-mono font-bold uppercase">
-                            {item.name}
-                        </span>
-                    </Link>
-                ))}
-            </div>
         </aside>
     );
 }
