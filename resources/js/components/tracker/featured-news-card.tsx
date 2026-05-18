@@ -6,7 +6,12 @@ interface FeaturedNewsCardProps {
 
 export default function FeaturedNewsCard({ article }: FeaturedNewsCardProps) {
     return (
-        <article className="bg-primary text-on-primary p-8 rounded-lg relative overflow-hidden group cursor-pointer">
+        <a 
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block bg-primary text-on-primary p-8 rounded-lg relative overflow-hidden group cursor-pointer"
+        >
             <div className="relative z-10">
                 <span className="text-label-caps font-mono font-bold bg-white/20 px-2 py-1 rounded uppercase">
                     TOP STORY
@@ -27,6 +32,6 @@ export default function FeaturedNewsCard({ article }: FeaturedNewsCardProps) {
                     trending_up
                 </span>
             </div>
-        </article>
+        </a>
     );
 }
