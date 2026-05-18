@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Link } from '@inertiajs/react';
 import { Bell, Check, Trash2, Mail, Rocket, ArrowUpCircle, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { 
     DropdownMenu, 
     DropdownMenuContent, 
@@ -8,8 +10,6 @@ import {
     DropdownMenuSeparator, 
     DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
-import { Link } from '@inertiajs/react';
 
 interface NotificationData {
     type: string;
@@ -40,6 +40,7 @@ export default function NotificationBell() {
     const fetchNotifications = async () => {
         try {
             const response = await fetch('/api/notifications');
+
             if (response.ok) {
                 const data: Notification[] = await response.json();
                 
@@ -73,6 +74,7 @@ export default function NotificationBell() {
         fetchNotifications();
         // Poll every 30 seconds
         const interval = setInterval(fetchNotifications, 30000);
+
         return () => clearInterval(interval);
     }, []);
 
@@ -85,6 +87,7 @@ export default function NotificationBell() {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             });
+
             if (res.ok) {
                 setNotifications(notifications.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n));
                 setUnreadCount(Math.max(0, unreadCount - 1));
@@ -103,6 +106,7 @@ export default function NotificationBell() {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 }
             });
+
             if (res.ok) {
                 setNotifications(notifications.map(n => ({ ...n, read_at: new Date().toISOString() })));
                 setUnreadCount(0);
@@ -113,7 +117,7 @@ export default function NotificationBell() {
         }
     };
 
-    const getIconForType = (type: string, className = "w-5 h-5") => {
+    function getIconForType(type: string, className = "w-5 h-5") {
         switch (type) {
             case 'upvote': return <ArrowUpCircle className={`${className} text-emerald-500`} />;
             case 'new_startup': return <Rocket className={`${className} text-primary`} />;
@@ -121,7 +125,7 @@ export default function NotificationBell() {
             case 'user_deleted': return <Trash2 className={`${className} text-error`} />;
             default: return <Bell className={className} />;
         }
-    };
+    }
 
     return (
         <DropdownMenu>
@@ -143,7 +147,9 @@ export default function NotificationBell() {
                     </DropdownMenuLabel>
                     {unreadCount > 0 && (
                         <button 
-                            onClick={(e) => { e.preventDefault(); markAllAsRead(); }}
+                            onClick={(e) => {
+ e.preventDefault(); markAllAsRead(); 
+}}
                             className="text-[10px] font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 uppercase tracking-wider"
                         >
                             <Check className="w-3 h-3" /> Mark all read
@@ -167,7 +173,10 @@ export default function NotificationBell() {
                                     key={notification.id} 
                                     className={`relative p-4 border-b border-outline-variant/30 last:border-b-0 hover:bg-surface-container-high/50 transition-colors cursor-pointer group ${!notification.read_at ? 'bg-primary/5' : ''}`}
                                     onClick={() => {
-                                        if (!notification.read_at) markAsRead(notification.id);
+                                        if (!notification.read_at) {
+markAsRead(notification.id);
+}
+
                                         if (notification.data.url) {
                                             window.location.href = notification.data.url;
                                         }

@@ -13,11 +13,11 @@ import {
     Users,
     Activity
 } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
 import { formatFunding } from '@/components/tracker/startup-card';
-import type { Startup } from '@/types';
+import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import startupRoutes from '@/routes/startups';
+import type { Startup } from '@/types';
 
 interface AdminDashboardProps {
     startups: {

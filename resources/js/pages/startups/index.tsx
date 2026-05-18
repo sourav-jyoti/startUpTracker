@@ -1,5 +1,4 @@
 import { Head, router, usePage, Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     TrendingUp, 
@@ -11,6 +10,7 @@ import {
     Zap,
     ShieldCheck
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { 
     AreaChart, 
     Area, 
@@ -81,6 +81,7 @@ export default function StartupsIndex({
         const search = url.includes('?') ? url.split('?')[1] : '';
         const params = new URLSearchParams(search);
         const tab = params.get('tab');
+
         if (tab === 'explore' || tab === 'submissions' || tab === 'watchlist' || tab === 'analytics') {
             setActiveTab(tab as any);
         } else {

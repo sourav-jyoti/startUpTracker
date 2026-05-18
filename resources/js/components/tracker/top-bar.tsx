@@ -1,7 +1,7 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
-import { UserMenuContent } from '@/components/user-menu-content';
 import NotificationBell from '@/components/NotificationBell';
+import { UserMenuContent } from '@/components/user-menu-content';
 
 interface TopBarProps {
     availableSectors?: string[];
@@ -33,6 +33,7 @@ export default function TopBar({
 
         searchTimeout.current = setTimeout(() => {
             const params = new URLSearchParams(window.location.search);
+
             if (value) {
                 params.set('search', value);
             } else {
@@ -64,7 +65,10 @@ export default function TopBar({
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+            if (searchTimeout.current) {
+clearTimeout(searchTimeout.current);
+}
         };
     }, []);
 

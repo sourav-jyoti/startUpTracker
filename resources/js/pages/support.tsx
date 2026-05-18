@@ -1,5 +1,4 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     HelpCircle, 
@@ -20,6 +19,7 @@ import {
     FileText,
     ShieldAlert
 } from 'lucide-react';
+import { useState } from 'react';
 import TrackerLayout from '@/layouts/tracker-layout';
 
 interface SupportTicket {
@@ -135,6 +135,7 @@ export default function Support({ initialUser, status, tickets }: Props) {
         const matchesSearch = faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesTab = activeFaqTab === 'all' || faq.category === activeFaqTab;
+
         return matchesSearch && matchesTab;
     });
 
@@ -514,6 +515,7 @@ export default function Support({ initialUser, status, tickets }: Props) {
                                                 day: 'numeric',
                                                 year: 'numeric'
                                             });
+
                                             return (
                                                 <div 
                                                     key={ticket.id} 
@@ -621,6 +623,7 @@ export default function Support({ initialUser, status, tickets }: Props) {
                                     {filteredFaqs.length > 0 ? (
                                         filteredFaqs.map((faq, index) => {
                                             const isOpen = openFaqIndex === index;
+
                                             return (
                                                 <div 
                                                     key={index} 
