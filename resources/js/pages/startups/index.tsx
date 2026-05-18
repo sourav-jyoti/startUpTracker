@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import FundingTrendCard from '@/components/tracker/funding-trend-card';
-import StartupCard from '@/components/tracker/startup-card';
+import StartupCard, { formatFunding } from '@/components/tracker/startup-card';
 import StartupDetailModal from '@/components/tracker/startup-detail-modal';
 import WeekSelector from '@/components/tracker/week-selector';
 import TrackerLayout from '@/layouts/tracker-layout';
@@ -67,7 +67,7 @@ export default function StartupsIndex({
                                     <p className="text-xs text-on-surface-variant">{startup.sector}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-bold text-primary">${startup.funding_amount}M</p>
+                                    <p className="text-sm font-bold text-primary">{formatFunding(startup.funding_amount)}</p>
                                     <p className="text-[10px] uppercase text-on-surface-variant font-bold tracking-wider">{startup.funding_stage}</p>
                                 </div>
                             </div>
