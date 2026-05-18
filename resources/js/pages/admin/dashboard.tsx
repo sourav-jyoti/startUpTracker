@@ -1,10 +1,12 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { 
     ShieldCheck, 
     Rocket, 
     Star, 
     Trash2, 
     ExternalLink,
+    Edit,
+    UserPlus,
     CheckCircle2,
     XCircle,
     LayoutDashboard,
@@ -61,6 +63,22 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                             Administrative Console
                         </h1>
                         <p className="text-body-base text-on-surface-variant">Review and manage platform submissions.</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/admin/users"
+                            className="inline-flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-2 rounded-xl font-bold hover:bg-surface-container transition-colors"
+                        >
+                            <Users className="w-5 h-5" />
+                            Manage Users
+                        </Link>
+                        <Link
+                            href="/admin/startups/create"
+                            className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-xl font-bold hover:bg-primary/90 transition-colors"
+                        >
+                            <Rocket className="w-5 h-5" />
+                            Add Startup
+                        </Link>
                     </div>
                 </div>
 
@@ -164,12 +182,18 @@ export default function AdminDashboard({ startups, stats }: AdminDashboardProps)
                                                     <Star className={`w-4 h-4 ${startup.is_featured ? 'fill-current' : ''}`} />
                                                 </button>
                                                 <a 
-                                                    href={startupRoutes.show.url({ startup: startup.slug })}
+                                                    href={startupRoutes.show.url({ startup: startup.slug as any })}
                                                     target="_blank"
                                                     className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all"
                                                 >
                                                     <ExternalLink className="w-4 h-4" />
                                                 </a>
+                                                <Link
+                                                    href={`/admin/startups/${startup.id}/edit`}
+                                                    className="p-2 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded-lg transition-all"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </Link>
                                                 <button 
                                                     onClick={() => deleteStartup(startup.id)}
                                                     className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-all"

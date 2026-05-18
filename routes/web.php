@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\UpvoteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -26,8 +27,17 @@ Route::middleware('guest')->group(function () {
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    
+    // Admin Startup Management
+    Route::get('/startups/create', [AdminController::class, 'create'])->name('startups.create');
+    Route::post('/startups', [AdminController::class, 'store'])->name('startups.store');
+    Route::get('/startups/{startup}/edit', [AdminController::class, 'edit'])->name('startups.edit');
+    Route::put('/startups/{startup}', [AdminController::class, 'update'])->name('startups.update');
     Route::post('/startups/{startup}/toggle-featured', [AdminController::class, 'toggleFeatured'])->name('startups.toggle-featured');
     Route::delete('/startups/{startup}', [AdminController::class, 'destroy'])->name('startups.destroy');
+
+    // Admin User Management
+    Route::resource('users', AdminUserController::class)->except(['show']);
 });
 
 // Authenticated user routes
