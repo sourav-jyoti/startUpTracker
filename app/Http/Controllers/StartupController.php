@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreStartupRequest;
 use App\Models\Sector;
 use App\Models\Startup;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
+use App\Notifications\NewStartupAdded;
+use App\Notifications\StartupSubmitted;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -267,7 +271,18 @@ class StartupController extends Controller
         $validated['total_funding'] = $validated['funding_amount'] ?? 0;
         $validated['funding_label'] = $validated['funding_stage'];
 
-        Startup::create($validated);
+        $startup = Startup::create($validated);
+
+        // Notify the creator that it was submitted successfully
+        if ($request->user()) {
+            $request->user()->notify(new StartupSubmitted($startup));
+        }
+
+        // Notify all other users (admins and regular) about the new startup
+        $users = User::where('id', '!=', $startup->user_id)->get();
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new NewStartupAdded($startup));
+        }
 
         return redirect()->route('home')->with('status', 'Startup submitted successfully!');
     }

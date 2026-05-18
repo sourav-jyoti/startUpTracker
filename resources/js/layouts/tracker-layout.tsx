@@ -1,7 +1,7 @@
 import { usePage } from '@inertiajs/react';
+import CommandPalette from '@/components/tracker/command-palette';
 import Sidebar from '@/components/tracker/sidebar';
 import TopBar from '@/components/tracker/top-bar';
-import CommandPalette from '@/components/tracker/command-palette';
 
 interface TrackerLayoutProps {
     children: React.ReactNode;

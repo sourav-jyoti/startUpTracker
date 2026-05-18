@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\UserAccountDeleted;
+use App\Notifications\UserDeletedAdminAlert;
 
 class AdminUserController extends Controller
 {
@@ -97,7 +100,20 @@ class AdminUserController extends Controller
             return back()->with('error', 'You cannot delete yourself.');
         }
 
+        // Store user data before deleting to use in notifications
+        $userName = $user->name;
+        $userEmail = $user->email;
+
+        // Notify the user they are being deleted
+        $user->notify(new UserAccountDeleted($userName));
+
         $user->delete();
+
+        // Notify admins about the deletion
+        $admins = User::where('is_admin', true)->get();
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new UserDeletedAdminAlert($userName, $userEmail));
+        }
 
         return back()->with('success', 'User deleted successfully.');
     }

@@ -24,7 +24,10 @@ export default function WeekSelector({
     }
 
     function handleShift(direction: -1 | 1) {
-        if (currentWeek === 'all') return;
+        if (currentWeek === 'all') {
+return;
+}
+
         const target = currentWeek + direction;
 
         if (target >= 1 && target <= 10) {

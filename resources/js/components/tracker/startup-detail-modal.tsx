@@ -14,9 +14,9 @@ import {
     ChevronUp
 } from 'lucide-react';
 import { formatFunding, formatStage } from '@/components/tracker/startup-card';
-import type { Startup } from '@/types';
 import bookmarks from '@/routes/bookmarks';
 import upvotes from '@/routes/upvotes';
+import type { Startup } from '@/types';
 
 interface StartupDetailModalProps {
     startup: Startup;

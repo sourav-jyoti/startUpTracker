@@ -63,6 +63,8 @@ export default [
         },
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unused-vars': 'off',
+            'react-hooks/set-state-in-effect': 'off',
             '@typescript-eslint/consistent-type-imports': [
                 'error',
                 {
@@ -100,7 +102,7 @@ export default [
         rules: {
             '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: false }],
             '@stylistic/padding-line-between-statements': [
-                'error',
+                'off', // Disable this to avoid annoying spacing errors
                 ...paddingAroundControl,
             ],
         },

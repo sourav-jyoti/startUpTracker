@@ -1,8 +1,8 @@
 import { router } from '@inertiajs/react';
 import { Bookmark, BookmarkCheck, Rocket, ChevronUp } from 'lucide-react';
-import type { Startup } from '@/types';
 import bookmarks from '@/routes/bookmarks';
 import upvotes from '@/routes/upvotes';
+import type { Startup } from '@/types';
 
 interface StartupCardProps {
     startup: Startup;
@@ -36,7 +36,10 @@ export function formatFunding(amount: string | number): string {
  * e.g. "series-a" -> "SERIES A"
  */
 export function formatStage(stage: string): string {
-    if (!stage) return 'N/A';
+    if (!stage) {
+return 'N/A';
+}
+
     return stage.replace(/-/g, ' ').toUpperCase();
 }
 

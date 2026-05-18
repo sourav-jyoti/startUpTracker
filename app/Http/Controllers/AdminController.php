@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Startup;
+use App\Models\User;
+use App\Notifications\NewStartupAdded;
+use App\Notifications\StartupSubmitted;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -74,7 +78,18 @@ class AdminController extends Controller
         $validated['user_id'] = auth()->id();
         $validated['is_featured'] = $request->boolean('is_featured', false);
 
-        Startup::create($validated);
+        $startup = Startup::create($validated);
+
+        // Notify the admin that it was submitted successfully
+        if (auth()->check()) {
+            auth()->user()->notify(new StartupSubmitted($startup));
+        }
+
+        // Notify all other users
+        $users = User::where('id', '!=', $startup->user_id)->get();
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new NewStartupAdded($startup));
+        }
 
         return redirect()->route('admin.dashboard')->with('success', 'Startup created successfully.');
     }

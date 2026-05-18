@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Command } from 'cmdk';
 import { router } from '@inertiajs/react';
-import { Search, Rocket, Star, LayoutDashboard, Bookmark, Plus, X } from 'lucide-react';
+import { Command } from 'cmdk';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Rocket, Star, LayoutDashboard, Bookmark, Plus, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function CommandPalette() {
     const [open, setOpen] = useState(false);
@@ -20,17 +20,20 @@ export default function CommandPalette() {
         };
 
         document.addEventListener('keydown', down);
+
         return () => document.removeEventListener('keydown', down);
     }, []);
 
     useEffect(() => {
         if (!search) {
             setResults([]);
+
             return;
         }
 
         const timer = setTimeout(async () => {
             setLoading(true);
+
             try {
                 const response = await fetch(`/api/search?q=${encodeURIComponent(search)}`);
                 const data = await response.json();
