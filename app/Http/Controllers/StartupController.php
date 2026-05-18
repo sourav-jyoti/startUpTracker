@@ -51,9 +51,15 @@ class StartupController extends Controller
             ->orderByDesc('funding_amount')
             ->get();
 
-        $sectors = Sector::query()
-            ->orderByDesc('percentage')
-            ->limit(6)
+        $trendingByFunding = Startup::query()
+            ->orderByDesc('funding_amount')
+            ->limit(3)
+            ->get();
+
+        $topByUpvote = Startup::query()
+            ->withCount('upvotes')
+            ->orderByDesc('upvotes_count')
+            ->limit(3)
             ->get();
 
         /** @var list<string> $availableSectors */
@@ -80,7 +86,8 @@ class StartupController extends Controller
 
         return Inertia::render('startups/index', [
             'startups' => $startups,
-            'sectors' => $sectors,
+            'trendingByFunding' => $trendingByFunding,
+            'topByUpvote' => $topByUpvote,
             'availableSectors' => $availableSectors,
             'activeSector' => $sectorFilter,
             'search' => $searchFilter,
