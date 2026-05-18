@@ -186,9 +186,9 @@ export default function TopBar({
                             Submit
                         </Link>
                         <Link
-                            href="/dashboard"
+                            href="/"
                             className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors"
-                            title="Dashboard"
+                            title="My Portfolio"
                         >
                             {user.avatar ? (
                                 <img

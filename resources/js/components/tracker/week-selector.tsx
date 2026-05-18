@@ -33,7 +33,7 @@ export default function WeekSelector({
     }
 
     return (
-        <div className="mb-10">
+        <div className="w-full">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-title-sm font-semibold">{title}</h2>
                 <div className="flex gap-2">

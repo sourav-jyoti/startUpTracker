@@ -3,10 +3,10 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\StartupController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\UpvoteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -14,9 +14,14 @@ use Laravel\Fortify\Features;
 Route::get('/', [StartupController::class, 'index'])->name('home');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 
-Route::inertia('/welcome', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('welcome');
+Route::get('/welcome', function (\Illuminate\Http\Request $request) {
+    if ($request->user() && $request->user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+    return inertia('welcome', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ]);
+})->name('welcome');
 
 // Google OAuth routes
 Route::middleware('guest')->group(function () {
@@ -27,7 +32,7 @@ Route::middleware('guest')->group(function () {
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    
+
     // Admin Startup Management
     Route::get('/startups/create', [AdminController::class, 'create'])->name('startups.create');
     Route::post('/startups', [AdminController::class, 'store'])->name('startups.store');
@@ -38,11 +43,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Admin User Management
     Route::resource('users', AdminUserController::class)->except(['show']);
-});
-
-// Authenticated user routes
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
 
 // Authenticated startup actions
@@ -63,4 +63,4 @@ Route::post('/support', [SupportController::class, 'store'])->name('support.stor
 // Public startup detail route (must be last due to wildcard)
 Route::get('/startups/{startup:slug}', [StartupController::class, 'show'])->name('startups.show');
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

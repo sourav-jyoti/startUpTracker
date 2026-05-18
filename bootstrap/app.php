@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->redirectUsersTo(function (\Illuminate\Http\Request $request) {
             $user = $request->user();
-            return ($user && $user->is_admin) ? '/admin/dashboard' : '/dashboard';
+            return ($user && $user->is_admin) ? '/admin/dashboard' : '/';
         });
 
         $middleware->web(append: [

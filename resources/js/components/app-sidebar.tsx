@@ -13,7 +13,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
 import type { NavItem } from '@/types';
 
@@ -34,19 +33,10 @@ export function AppSidebar() {
             href: '/admin/users',
             icon: Users,
         },
-        {
-            title: 'Back to App',
-            href: '/dashboard',
-            icon: LayoutGrid,
-        },
+
     ] : [
         {
-            title: 'Dashboard',
-            href: dashboard(),
-            icon: LayoutGrid,
-        },
-        {
-            title: 'Explore Startups',
+            title: 'Explore',
             href: '/',
             icon: Search,
         },
@@ -74,7 +64,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
