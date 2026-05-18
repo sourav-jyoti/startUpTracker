@@ -271,6 +271,50 @@ class StartupController extends Controller
 
         return redirect()->route('home')->with('status', 'Startup submitted successfully!');
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Startup $startup): Response
+    {
+        /** @var list<string> $availableSectors */
+        $availableSectors = Startup::query()
+            ->distinct()
+            ->pluck('sector')
+            ->sort()
+            ->values()
+            ->all();
+
+        return Inertia::render('startups/edit', [
+            'startup' => $startup,
+            'availableSectors' => $availableSectors,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(StoreStartupRequest $request, Startup $startup): RedirectResponse
+    {
+        $validated = $request->validated();
+        
+        $validated['slug'] = Str::slug($validated['name']);
+        $validated['total_funding'] = $validated['funding_amount'] ?? 0;
+        $validated['funding_label'] = $validated['funding_stage'];
+
+        $startup->update($validated);
+
+        return redirect()->route('home')->with('status', 'Startup updated successfully!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Startup $startup): RedirectResponse
+    {
+        $startup->delete();
+        return redirect()->route('home')->with('status', 'Startup deleted successfully!');
+    }
     /**
      * Search startups for the command palette.
      */

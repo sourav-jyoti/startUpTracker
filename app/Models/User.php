@@ -46,6 +46,16 @@ class User extends Authenticatable
     /**
      * @return BelongsToMany<Startup, $this>
      */
+    public function memberStartups(): BelongsToMany
+    {
+        return $this->belongsToMany(Startup::class, 'startup_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Startup, $this>
+     */
     public function bookmarkedStartups(): BelongsToMany
     {
         return $this->belongsToMany(Startup::class, 'bookmarks');

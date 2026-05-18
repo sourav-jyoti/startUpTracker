@@ -1,5 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import { UserMenuContent } from '@/components/user-menu-content';
 
 interface TopBarProps {
     availableSectors?: string[];
@@ -185,23 +186,29 @@ export default function TopBar({
                             </span>
                             Submit
                         </Link>
-                        <Link
-                            href="/"
-                            className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors"
-                            title="My Portfolio"
-                        >
-                            {user.avatar ? (
-                                <img
-                                    src={user.avatar}
-                                    alt={user.name}
-                                    className="w-7 h-7 rounded-full object-cover"
-                                />
-                            ) : (
-                                <span className="material-symbols-outlined text-[28px]">
-                                    account_circle
-                                </span>
-                            )}
-                        </Link>
+                        <div className="relative group">
+                            <button
+                                className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors outline-none cursor-pointer"
+                                title="User Menu"
+                            >
+                                {user.avatar ? (
+                                    <img
+                                        src={user.avatar}
+                                        alt={user.name}
+                                        className="w-7 h-7 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="material-symbols-outlined text-[28px]">
+                                        account_circle
+                                    </span>
+                                )}
+                            </button>
+                            <div className="absolute right-0 top-full pt-1 hidden group-hover:block z-50">
+                                <div className="w-56 bg-surface-container-lowest border border-outline-variant rounded-lg shadow-lg py-1">
+                                    <UserMenuContent user={user} />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 ) : (
                     <Link
