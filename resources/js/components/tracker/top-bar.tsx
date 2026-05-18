@@ -1,6 +1,7 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { UserMenuContent } from '@/components/user-menu-content';
+import NotificationBell from '@/components/NotificationBell';
 
 interface TopBarProps {
     availableSectors?: string[];
@@ -186,6 +187,7 @@ export default function TopBar({
                             </span>
                             Submit
                         </Link>
+                        <NotificationBell />
                         <div className="relative group">
                             <button
                                 className="text-primary hover:bg-surface-container rounded-full p-2 transition-colors outline-none cursor-pointer"

@@ -8,6 +8,7 @@ use App\Http\Controllers\UpvoteController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -58,6 +59,13 @@ Route::middleware(['auth'])->group(function () {
 
 // API Search
 Route::get('/api/search', [StartupController::class, 'search'])->name('api.search');
+
+// Notifications
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/api/notifications/{id}/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+});
 
 // Support routes
 Route::get('/support', [SupportController::class, 'index'])->name('support.index');

@@ -12,6 +12,7 @@ import {
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
+import NotificationBell from '@/components/NotificationBell';
 
 export function AppSidebarHeader({
     breadcrumbs = [],
@@ -43,6 +44,8 @@ export function AppSidebarHeader({
                         <span className="text-xs">⌘</span>K
                     </kbd>
                 </button>
+
+                <NotificationBell />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
