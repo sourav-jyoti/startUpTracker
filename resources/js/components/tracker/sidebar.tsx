@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import AppLogoIcon from '@/components/app-logo-icon';
 
 const authNavItems = [
     { name: 'Add Startup', icon: 'add_circle', href: '/startups/create' },
@@ -41,14 +42,17 @@ export default function Sidebar() {
     return (
         <aside className="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-surface-container-lowest border-r border-outline-variant w-[240px]">
             {/* Logo */}
-            <div className="mb-10 px-2">
-                <h1 className="text-headline-md font-semibold text-primary leading-tight tracking-tight">
-                    StartUpTracker
-                </h1>
-                <p className="text-label-caps font-mono font-bold text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">
-                    Venture Insights
-                </p>
-            </div>
+            <Link href="/" className="mb-10 px-2 flex items-center gap-2.5 group">
+                <AppLogoIcon className="w-8 h-8 shadow-sm group-hover:scale-105 transition-transform duration-300" />
+                <div>
+                    <h1 className="text-body-lg font-bold text-primary leading-none tracking-tight">
+                        StartUpTracker
+                    </h1>
+                    <p className="text-[9px] font-mono font-bold text-on-surface-variant opacity-70 uppercase tracking-widest mt-0.5 leading-none">
+                        Venture Insights
+                    </p>
+                </div>
+            </Link>
 
             {/* Main Navigation */}
             <nav className="flex-1 space-y-1">
