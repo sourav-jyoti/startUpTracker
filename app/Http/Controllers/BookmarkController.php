@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Startup;
 use Illuminate\Http\RedirectResponse;
+use App\Notifications\StartupBookmarked;
 
 class BookmarkController extends Controller
 {
@@ -23,6 +24,12 @@ class BookmarkController extends Controller
         } else {
             $user->bookmarkedStartups()->attach($startup->id);
             $message = 'Startup added to watchlist!';
+
+            if ($startup->user_id && $startup->user_id !== $user->id) {
+                if ($startup->user) {
+                    $startup->user->notify(new StartupBookmarked($startup, $user));
+                }
+            }
         }
 
         return back()->with('status', $message);
