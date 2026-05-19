@@ -40,8 +40,8 @@ type Props = {
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Home',
-        href: '/',
+        title: 'Explore',
+        href: '/explore',
         icon: LayoutGrid,
     },
 ];

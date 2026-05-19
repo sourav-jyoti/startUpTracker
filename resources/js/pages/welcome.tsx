@@ -1,393 +1,734 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { login, register } from '@/routes';
+import { useState } from 'react';
+import { 
+    TrendingUp, 
+    ChevronRight, 
+    ArrowUpRight, 
+    Cpu, 
+    LineChart, 
+    Layers, 
+    Award,
+    Shield,
+    Flame,
+    Activity
+} from 'lucide-react';
 
 export default function Welcome({
     canRegister = true,
 }: {
     canRegister?: boolean;
 }) {
-    const { auth } = usePage().props;
+    const { auth } = usePage().props as any;
+    const user = auth?.user ?? null;
+
+    // Local state for interactive statistics demo
+    const [activeDemoTab, setActiveDemoTab] = useState<'chart' | 'sectors' | 'trending'>('chart');
+    const [animatedUpvotes, setAnimatedUpvotes] = useState(148);
+    const [isUpvoted, setIsUpvoted] = useState(false);
+
+    // Micro-interactions
+    const handleUpvoteDemo = () => {
+        if (!isUpvoted) {
+            setAnimatedUpvotes(prev => prev + 1);
+            setIsUpvoted(true);
+        } else {
+            setAnimatedUpvotes(prev => prev - 1);
+            setIsUpvoted(false);
+        }
+    };
 
     return (
         <>
-            <Head title="Welcome" />
-            <div className="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-                <header className="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
-                    <nav className="flex items-center justify-end gap-4">
-                        {auth.user ? (
-                            <Link
-                                href="/"
-                                className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                            >
-                                Dashboard
-                            </Link>
-                        ) : (
-                            <>
+            <Head title="Venture Insights & Startup Tracker" />
+            
+            <div className="min-h-screen bg-background text-on-surface font-sans overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container relative">
+                
+                {/* Glowing Ambient Background Circles */}
+                <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/10 blur-[120px] pointer-events-none animate-pulse duration-5000"></div>
+                <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] rounded-full bg-secondary/8 blur-[120px] pointer-events-none animate-pulse duration-3000"></div>
+                <div className="absolute bottom-[10%] left-[10%] w-[40vw] h-[40vw] rounded-full bg-tertiary/8 blur-[120px] pointer-events-none"></div>
+
+                {/* Main Navigation Bar */}
+                <header className="sticky top-0 z-50 backdrop-blur-md bg-background/70 border-b border-outline-variant/30 transition-all duration-300">
+                    <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                        
+                        {/* Logo */}
+                        <Link href="/" className="flex items-center gap-2 group">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform duration-300">
+                                <span className="material-symbols-outlined text-[24px] font-bold">rocket_launch</span>
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-bold tracking-tight text-on-surface flex items-center gap-1.5">
+                                    StartUpTracker
+                                </h1>
+                                <p className="text-[10px] font-mono font-bold text-on-surface-variant uppercase tracking-widest leading-none">
+                                    Venture Insights
+                                </p>
+                            </div>
+                        </Link>
+
+                        {/* Middle Nav Links (Desktop) */}
+                        <nav className="hidden md:flex items-center gap-8">
+                            <a href="#features" className="text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Features</a>
+                            <a href="#stats" className="text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Ecosystem Stats</a>
+                            <a href="#sectors" className="text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Sectors</a>
+                            <Link href="/explore" className="text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Explore Feed</Link>
+                            <Link href="/news" className="text-body-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">Venture News</Link>
+                        </nav>
+
+                        {/* CTA / User Panel */}
+                        <div className="flex items-center gap-4">
+                            {user ? (
                                 <Link
-                                    href={login()}
-                                    className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                                    href="/explore"
+                                    className="flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/95 px-6 py-2.5 rounded-full text-body-sm font-mono font-bold uppercase tracking-wider shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95"
                                 >
-                                    Log in
+                                    <span className="material-symbols-outlined text-[18px]">dashboard</span>
+                                    Workspace
                                 </Link>
-                                {canRegister && (
+                            ) : (
+                                <>
+                                    <Link
+                                        href={login()}
+                                        className="text-body-sm font-mono font-bold uppercase tracking-wider text-on-surface-variant hover:text-primary hover:bg-surface-container/50 px-4 py-2 rounded-full transition-colors"
+                                    >
+                                        Sign In
+                                    </Link>
+                                    {canRegister && (
+                                        <Link
+                                            href={register()}
+                                            className="hidden sm:flex items-center gap-1.5 bg-primary text-on-primary hover:bg-primary/95 px-6 py-2.5 rounded-full text-body-sm font-mono font-bold uppercase tracking-wider shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95"
+                                        >
+                                            Join Now
+                                            <ChevronRight className="w-4 h-4" />
+                                        </Link>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </header>
+
+                {/* Hero Section */}
+                <section className="relative pt-12 pb-24 md:pt-20 md:pb-32 px-6">
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                        
+                        {/* Hero Text */}
+                        <div className="lg:col-span-7 flex flex-col items-start text-left space-y-6">
+                            
+                            {/* Live Badge */}
+                            <div className="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-container border border-secondary/20 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider animate-bounce">
+                                <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+                                Ecosystem Tracker Active
+                            </div>
+
+                            {/* Headline */}
+                            <h2 className="text-display-lg sm:text-[54px] font-bold tracking-tight text-on-surface leading-[1.1] max-w-2xl">
+                                The pulse of early-stage <br />
+                                <span className="bg-gradient-to-r from-primary via-tertiary to-secondary bg-clip-text text-transparent">
+                                    venture insights.
+                                </span>
+                            </h2>
+
+                            {/* Subtitle */}
+                            <p className="text-body-base text-on-surface-variant max-w-xl">
+                                Discover emerging startups, track funding rounds, and monitor developer ecosystem shifts in real-time. Spot promising founders before they hit the mainstream.
+                            </p>
+
+                            {/* Actions */}
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto pt-2">
+                                <Link
+                                    href="/explore"
+                                    className="flex items-center justify-center gap-2 bg-primary text-on-primary hover:bg-primary/95 px-8 py-4 rounded-full text-body-base font-mono font-bold uppercase tracking-wider shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95 text-center"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">explore</span>
+                                    Explore Startups
+                                </Link>
+                                
+                                <Link
+                                    href="/news"
+                                    className="flex items-center justify-center gap-2 border border-outline-variant bg-surface-container-low hover:bg-surface-container text-on-surface px-8 py-4 rounded-full text-body-base font-mono font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 active:scale-95 text-center"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">newspaper</span>
+                                    Venture News
+                                </Link>
+                            </div>
+
+                            {/* Small ecosystem stats summary */}
+                            <div className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-6 border-t border-outline-variant/50 w-full max-w-lg">
+                                <div>
+                                    <span className="block text-2xl font-bold text-on-surface">189+</span>
+                                    <span className="text-xs font-mono text-on-surface-variant uppercase tracking-wider">Startups Listed</span>
+                                </div>
+                                <div className="w-px h-8 bg-outline-variant/60 hidden sm:block"></div>
+                                <div>
+                                    <span className="block text-2xl font-bold text-on-surface">$12.4B</span>
+                                    <span className="text-xs font-mono text-on-surface-variant uppercase tracking-wider">Funding Monitored</span>
+                                </div>
+                                <div className="w-px h-8 bg-outline-variant/60 hidden sm:block"></div>
+                                <div>
+                                    <span className="block text-2xl font-bold text-on-surface">12+</span>
+                                    <span className="text-xs font-mono text-on-surface-variant uppercase tracking-wider">Sectors Tracked</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Interactive Hero Graphic (Dashboard Mockup) */}
+                        <div className="lg:col-span-5 relative w-full">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-3xl blur-2xl"></div>
+                            
+                            {/* Glassmorphic Window Mockup */}
+                            <div className="relative bg-surface-container-lowest/80 border border-outline-variant/50 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md">
+                                
+                                {/* Window Header */}
+                                <div className="flex items-center justify-between px-4 py-3 bg-surface-container border-b border-outline-variant/60">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-3 h-3 rounded-full bg-error"></div>
+                                        <div className="w-3 h-3 rounded-full bg-secondary"></div>
+                                        <div className="w-3 h-3 rounded-full bg-primary"></div>
+                                    </div>
+                                    <span className="text-[11px] font-mono text-on-surface-variant/70">live_tracker_demo.json</span>
+                                    <div className="w-4 h-4"></div>
+                                </div>
+
+                                {/* Interactive Mockup Body */}
+                                <div className="p-5 space-y-4">
+                                    
+                                    {/* Mock Tabs */}
+                                    <div className="flex gap-2 p-1 bg-surface-container-low rounded-lg">
+                                        <button 
+                                            onClick={() => setActiveDemoTab('chart')}
+                                            className={`flex-1 text-center py-1.5 text-xs font-mono font-bold rounded transition-all uppercase ${activeDemoTab === 'chart' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant/80 hover:text-on-surface'}`}
+                                        >
+                                            Trends
+                                        </button>
+                                        <button 
+                                            onClick={() => setActiveDemoTab('sectors')}
+                                            className={`flex-1 text-center py-1.5 text-xs font-mono font-bold rounded transition-all uppercase ${activeDemoTab === 'sectors' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant/80 hover:text-on-surface'}`}
+                                        >
+                                            Sectors
+                                        </button>
+                                        <button 
+                                            onClick={() => setActiveDemoTab('trending')}
+                                            className={`flex-1 text-center py-1.5 text-xs font-mono font-bold rounded transition-all uppercase ${activeDemoTab === 'trending' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant/80 hover:text-on-surface'}`}
+                                        >
+                                            Spotlight
+                                        </button>
+                                    </div>
+
+                                    {/* Tab 1 Content: Mini Chart */}
+                                    {activeDemoTab === 'chart' && (
+                                        <div className="space-y-3 animate-fade-in duration-300">
+                                            <div className="flex justify-between items-center">
+                                                <h4 className="text-body-sm font-semibold text-on-surface flex items-center gap-1.5">
+                                                    <TrendingUp className="w-4 h-4 text-secondary" />
+                                                    Funding Trends (Q2 2026)
+                                                </h4>
+                                                <span className="text-xs font-mono text-secondary font-bold bg-secondary-container px-2 py-0.5 rounded">+24.8%</span>
+                                            </div>
+                                            
+                                            {/* Beautiful CSS bar graph */}
+                                            <div className="h-32 flex items-end gap-2.5 pt-4">
+                                                <div className="flex-1 bg-primary/20 hover:bg-primary transition-all duration-300 rounded-t-sm h-[30%]" title="April: $1.2B"></div>
+                                                <div className="flex-1 bg-primary/30 hover:bg-primary transition-all duration-300 rounded-t-sm h-[50%]" title="May: $2.1B"></div>
+                                                <div className="flex-1 bg-primary/40 hover:bg-primary transition-all duration-300 rounded-t-sm h-[40%]" title="June: $1.8B"></div>
+                                                <div className="flex-1 bg-gradient-to-t from-primary to-secondary hover:from-primary hover:to-secondary transition-all duration-300 rounded-t-sm h-[85%] relative group" title="July: $4.2B">
+                                                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-on-surface text-surface text-[10px] font-mono px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$4.2B</div>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-between text-[10px] font-mono text-on-surface-variant px-1 border-t border-outline-variant/40 pt-1.5">
+                                                <span>APR</span>
+                                                <span>MAY</span>
+                                                <span>JUN</span>
+                                                <span className="text-primary font-bold">JUL (EST)</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Tab 2 Content: Active Sector Pill Showcase */}
+                                    {activeDemoTab === 'sectors' && (
+                                        <div className="space-y-3 animate-fade-in duration-300">
+                                            <h4 className="text-body-sm font-semibold text-on-surface flex items-center gap-1.5">
+                                                <Layers className="w-4 h-4 text-tertiary" />
+                                                Hot Ecosystem Sectors
+                                            </h4>
+                                            <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                                                Track seed & growth volumes across emerging sectors updated hourly.
+                                            </p>
+                                            <div className="grid grid-cols-2 gap-2 pt-1">
+                                                <div className="bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl p-2.5 transition-colors cursor-pointer group">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-primary">AI & ML</span>
+                                                        <Cpu className="w-3.5 h-3.5 text-primary" />
+                                                    </div>
+                                                    <span className="text-base font-bold">$4.2B</span>
+                                                    <span className="block text-[9px] font-mono text-on-surface-variant">32 Rounds</span>
+                                                </div>
+                                                <div className="bg-secondary/5 hover:bg-secondary/10 border border-secondary/20 rounded-xl p-2.5 transition-colors cursor-pointer group">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-secondary">FinTech</span>
+                                                        <LineChart className="w-3.5 h-3.5 text-secondary" />
+                                                    </div>
+                                                    <span className="text-base font-bold">$2.8B</span>
+                                                    <span className="block text-[9px] font-mono text-on-surface-variant">24 Rounds</span>
+                                                </div>
+                                                <div className="bg-tertiary/5 hover:bg-tertiary/10 border border-tertiary/20 rounded-xl p-2.5 transition-colors cursor-pointer group">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-tertiary">SaaS</span>
+                                                        <Layers className="w-3.5 h-3.5 text-tertiary" />
+                                                    </div>
+                                                    <span className="text-base font-bold">$1.9B</span>
+                                                    <span className="block text-[9px] font-mono text-on-surface-variant">19 Rounds</span>
+                                                </div>
+                                                <div className="bg-outline-variant/10 hover:bg-outline-variant/20 border border-outline-variant/30 rounded-xl p-2.5 transition-colors cursor-pointer group">
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <span className="text-xs font-mono font-bold uppercase tracking-wider text-on-surface-variant">BioTech</span>
+                                                        <Activity className="w-3.5 h-3.5 text-on-surface-variant" />
+                                                    </div>
+                                                    <span className="text-base font-bold">$3.5B</span>
+                                                    <span className="block text-[9px] font-mono text-on-surface-variant">12 Rounds</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Tab 3 Content: Spotlight Cards */}
+                                    {activeDemoTab === 'trending' && (
+                                        <div className="space-y-3 animate-fade-in duration-300">
+                                            <h4 className="text-body-sm font-semibold text-on-surface flex items-center gap-1.5">
+                                                <Award className="w-4 h-4 text-primary" />
+                                                Spotlight Startup Card
+                                            </h4>
+                                            
+                                            {/* Mini Startup Card Representation */}
+                                            <div className="bg-surface-container border border-outline-variant rounded-xl p-4 space-y-3">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="flex gap-2.5 items-center">
+                                                        <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-lg">
+                                                            QL
+                                                        </div>
+                                                        <div>
+                                                            <h5 className="text-body-sm font-bold leading-none">QuantumLeap</h5>
+                                                            <span className="text-[10px] font-mono text-on-surface-variant">AI & ML • Seed Stage</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {/* Upvote Button with click interaction */}
+                                                    <button 
+                                                        onClick={handleUpvoteDemo}
+                                                        className={`flex flex-col items-center justify-center border px-2.5 py-1.5 rounded-lg transition-all ${
+                                                            isUpvoted 
+                                                                ? 'bg-primary text-on-primary border-primary scale-105' 
+                                                                : 'border-outline-variant hover:bg-surface-container-high'
+                                                        }`}
+                                                    >
+                                                        <span className="material-symbols-outlined text-[16px] leading-none">arrow_drop_up</span>
+                                                        <span className="text-xs font-mono font-bold leading-none">{animatedUpvotes}</span>
+                                                    </button>
+                                                </div>
+                                                
+                                                <p className="text-xs text-on-surface-variant leading-relaxed">
+                                                    "Next-generation quantum-classical neural compiler reducing LLM optimization latency by 60%."
+                                                </p>
+                                                
+                                                <div className="flex justify-between items-center text-[10px] font-mono text-on-surface-variant/80 border-t border-outline-variant/40 pt-2">
+                                                    <span>Funded: $4.2M</span>
+                                                    <span className="text-primary font-semibold hover:underline flex items-center gap-0.5 cursor-pointer">
+                                                        View details <ArrowUpRight className="w-3 h-3" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* Live Stats Row */}
+                <section id="stats" className="py-12 bg-surface-container-low border-y border-outline-variant/30 px-6">
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        
+                        <div className="flex items-center gap-4 bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 hover:border-primary/30 transition-all duration-300 group">
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-[26px]">database</span>
+                            </div>
+                            <div>
+                                <span className="block text-2xl font-bold text-on-surface leading-tight">189</span>
+                                <span className="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Active Startups</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 hover:border-secondary/30 transition-all duration-300 group">
+                            <div className="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-[26px]">monitoring</span>
+                            </div>
+                            <div>
+                                <span className="block text-2xl font-bold text-on-surface leading-tight">$12.4B</span>
+                                <span className="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Total Funding</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 hover:border-tertiary/30 transition-all duration-300 group">
+                            <div className="w-12 h-12 rounded-xl bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-[26px]">category</span>
+                            </div>
+                            <div>
+                                <span className="block text-2xl font-bold text-on-surface leading-tight">12+</span>
+                                <span className="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Industry Sectors</span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 bg-surface-container-lowest p-5 rounded-2xl border border-outline-variant/30 hover:border-primary/30 transition-all duration-300 group">
+                            <div className="w-12 h-12 rounded-xl bg-error/10 text-error flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <span className="material-symbols-outlined text-[26px]">star</span>
+                            </div>
+                            <div>
+                                <span className="block text-2xl font-bold text-on-surface leading-tight">4,892</span>
+                                <span className="text-xs font-mono text-on-surface-variant uppercase tracking-widest">Community Upvotes</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* Features Section */}
+                <section id="features" className="py-24 px-6 relative">
+                    <div className="max-w-7xl mx-auto space-y-16">
+                        
+                        {/* Section Header */}
+                        <div className="text-center max-w-2xl mx-auto space-y-4">
+                            <span className="text-xs font-mono font-bold uppercase bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full tracking-widest">
+                                Core Capabilities
+                            </span>
+                            <h3 className="text-headline-md sm:text-[36px] font-bold text-on-surface tracking-tight">
+                                Built for founders, investors, and ecosystem builders.
+                            </h3>
+                            <p className="text-body-base text-on-surface-variant">
+                                Explore a highly specialized workspace packed with tools designed to extract intelligence from the early-stage start-up landscape.
+                            </p>
+                        </div>
+
+                        {/* Features Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            
+                            {/* Feature 1 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">explore</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Chronological Explorer</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Browse the ecosystem chronologically using our advanced week-by-week selectors. Filter startups by funding size, location, and industry tags.
+                                </p>
+                            </div>
+
+                            {/* Feature 2 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">monitoring</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Deep Venture Analytics</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Analyze funding volumes, average round sizes, valuation trends, and sector momentum charts updated dynamically with every single transaction.
+                                </p>
+                            </div>
+
+                            {/* Feature 3 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-tertiary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-tertiary/10 text-tertiary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">newspaper</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Aggregated News Feed</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Stay ahead of markets with our automated tech ecosystem news feed, aggregating articles, funding announcements, and founder tweets.
+                                </p>
+                            </div>
+
+                            {/* Feature 4 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-error/10 text-error flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">star</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Spotlight Upvoting</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Leverage crowd wisdom. Community members upvote and bookmark projects, helping outstanding startups float to the spotlight feed.
+                                </p>
+                            </div>
+
+                            {/* Feature 5 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">shield_person</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Lean RBAC Permissions</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Robust, secure user-roles system distinguishing Admins, Founders, Members, and Viewers to secure sensitive startup statistics.
+                                </p>
+                            </div>
+
+                            {/* Feature 6 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 hover:shadow-xl hover:border-secondary/20 transition-all duration-300 group space-y-4">
+                                <div className="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="material-symbols-outlined text-[26px]">notifications_active</span>
+                                </div>
+                                <h4 className="text-title-sm font-bold">Real-time Watchlists</h4>
+                                <p className="text-body-sm text-on-surface-variant leading-relaxed">
+                                    Bookmark early stage companies and get notified immediately when they raise capital, change stages, or publish press announcements.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                {/* Industry Sectors Showcase */}
+                <section id="sectors" className="py-20 bg-surface-container-low px-6 relative">
+                    <div className="max-w-7xl mx-auto space-y-12">
+                        
+                        {/* Title */}
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                            <div className="space-y-3 text-left">
+                                <span className="text-xs font-mono font-bold uppercase text-secondary bg-secondary/10 px-3.5 py-1 rounded-full tracking-wider border border-secondary/20">
+                                    Market Segments
+                                </span>
+                                <h3 className="text-headline-md font-bold text-on-surface tracking-tight">
+                                    Explore Hot Sectors
+                                </h3>
+                                <p className="text-body-sm text-on-surface-variant max-w-xl">
+                                    Click any industry sector to instantly view filtered startups, check analytics, or analyze funding transactions.
+                                </p>
+                            </div>
+                            
+                            <Link 
+                                href="/explore" 
+                                className="flex items-center gap-1.5 text-body-sm font-mono font-bold uppercase text-primary hover:text-primary/80 group whitespace-nowrap self-start md:self-auto"
+                            >
+                                View all sectors 
+                                <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                            </Link>
+                        </div>
+
+                        {/* Sectors Pills Grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                            {[
+                                { name: 'AI & ML', icon: 'cpu', color: 'border-primary text-primary hover:bg-primary/5' },
+                                { name: 'FinTech', icon: 'payments', color: 'border-secondary text-secondary hover:bg-secondary/5' },
+                                { name: 'SaaS', icon: 'layers', color: 'border-tertiary text-tertiary hover:bg-tertiary/5' },
+                                { name: 'BioTech', icon: 'experiment', color: 'border-error text-error hover:bg-error/5' },
+                                { name: 'CleanTech', icon: 'eco', color: 'border-secondary text-secondary hover:bg-secondary/5' },
+                                { name: 'HealthTech', icon: 'heart_check', color: 'border-primary text-primary hover:bg-primary/5' },
+                            ].map((sec) => (
+                                <Link
+                                    key={sec.name}
+                                    href={`/explore?sector=${sec.name}`}
+                                    className={`flex flex-col items-center justify-center p-6 border rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer ${sec.color}`}
+                                >
+                                    <span className="material-symbols-outlined text-[32px] mb-3">{sec.icon}</span>
+                                    <span className="text-body-sm font-bold text-on-surface">{sec.name}</span>
+                                    <span className="text-[10px] font-mono text-on-surface-variant mt-1">Explore →</span>
+                                </Link>
+                            ))}
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* How it Works Section */}
+                <section className="py-24 px-6 relative">
+                    <div className="max-w-7xl mx-auto space-y-16">
+                        
+                        {/* Header */}
+                        <div className="text-center max-w-2xl mx-auto space-y-4">
+                            <span className="text-xs font-mono font-bold uppercase text-tertiary bg-tertiary/10 px-3 py-1 rounded-full tracking-widest border border-tertiary/20">
+                                How It Works
+                            </span>
+                            <h3 className="text-headline-md font-bold tracking-tight text-on-surface">
+                                Start monitoring key startup details in 3 steps
+                            </h3>
+                        </div>
+
+                        {/* Steps Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                            
+                            {/* Connector line (desktop only) */}
+                            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-outline-variant/40 hidden md:block -z-10 -translate-y-6"></div>
+
+                            {/* Step 1 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 text-center space-y-4 hover:shadow-lg transition-shadow relative">
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-mono font-bold text-sm border-4 border-background">
+                                    01
+                                </div>
+                                <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto pt-1">
+                                    <span className="material-symbols-outlined text-[28px]">app_registration</span>
+                                </div>
+                                <h4 className="text-body-base font-bold pt-2">Register & Profile</h4>
+                                <p className="text-xs text-on-surface-variant leading-relaxed">
+                                    Create a free member account or apply for founder status. Connect details, setup alerts, or list your active early stage startup.
+                                </p>
+                            </div>
+
+                            {/* Step 2 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 text-center space-y-4 hover:shadow-lg transition-shadow relative">
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-mono font-bold text-sm border-4 border-background">
+                                    02
+                                </div>
+                                <div className="w-14 h-14 rounded-full bg-secondary/10 text-secondary flex items-center justify-center mx-auto pt-1">
+                                    <span className="material-symbols-outlined text-[28px]">search</span>
+                                </div>
+                                <h4 className="text-body-base font-bold pt-2">Spotlight & Upvote</h4>
+                                <p className="text-xs text-on-surface-variant leading-relaxed">
+                                    Discover trending projects using timeline filters. Bookmark top assets to watchlists and upvote high-potential companies.
+                                </p>
+                            </div>
+
+                            {/* Step 3 */}
+                            <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl p-6 text-center space-y-4 hover:shadow-lg transition-shadow relative">
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-mono font-bold text-sm border-4 border-background">
+                                    03
+                                </div>
+                                <div className="w-14 h-14 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center mx-auto pt-1">
+                                    <span className="material-symbols-outlined text-[28px]">monitoring</span>
+                                </div>
+                                <h4 className="text-body-base font-bold pt-2">Analyze Market Trends</h4>
+                                <p className="text-xs text-on-surface-variant leading-relaxed">
+                                    Monitor aggregate statistics on hot sectors, stage funding volumes, weekly submission momentum, and real-time tech news.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                {/* Breathtaking Call to Action (Bottom Banner) */}
+                <section className="py-16 px-6">
+                    <div className="max-w-7xl mx-auto bg-gradient-to-tr from-primary via-tertiary to-secondary rounded-3xl p-8 md:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-primary/20 group">
+                        
+                        {/* Animated decorative circles */}
+                        <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] rounded-full bg-white/10 blur-2xl group-hover:scale-110 transition-transform duration-1000"></div>
+                        <div className="absolute bottom-[-20%] left-[-10%] w-[250px] h-[250px] rounded-full bg-black/10 blur-2xl"></div>
+
+                        <div className="relative z-10 max-w-2xl mx-auto space-y-8">
+                            <h3 className="text-display-lg sm:text-[40px] font-bold leading-tight tracking-tight">
+                                Spot the next unicorn before it happens.
+                            </h3>
+                            
+                            <p className="text-body-base opacity-90 text-white leading-relaxed max-w-xl mx-auto">
+                                Join our network of investors, founders, and startup enthusiasts today. Leverage community wisdom and rich metrics to understand the venture landscape.
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                                <Link
+                                    href="/explore"
+                                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-primary hover:bg-neutral-50 px-8 py-4 rounded-full text-body-base font-mono font-bold uppercase tracking-wider transition-all hover:shadow-lg active:scale-95 text-center cursor-pointer"
+                                >
+                                    Start Exploring
+                                    <ChevronRight className="w-4 h-4 text-primary" />
+                                </Link>
+                                
+                                {!user && canRegister && (
                                     <Link
                                         href={register()}
-                                        className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-black/30 border border-white/40 hover:bg-black/40 text-white px-8 py-4 rounded-full text-body-base font-mono font-bold uppercase tracking-wider transition-all active:scale-95 text-center cursor-pointer"
                                     >
-                                        Register
+                                        Create Free Account
                                     </Link>
                                 )}
-                            </>
-                        )}
-                    </nav>
-                </header>
-                <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
-                    <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
-                        <div className="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
-                            <h1 className="mb-1 font-medium">
-                                Let's get started
-                            </h1>
-                            <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                                Laravel has an incredibly rich ecosystem.
-                                <br />
-                                We suggest starting with the following.
+                            </div>
+
+                            {/* Small bullets */}
+                            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-mono opacity-80 pt-4">
+                                <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5" /> Secure RBAC</span>
+                                <span className="flex items-center gap-1"><Flame className="w-3.5 h-3.5" /> High-frequency News</span>
+                                <span className="flex items-center gap-1"><Activity className="w-3.5 h-3.5" /> Interactive Charts</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Footer Section */}
+                <footer className="bg-surface-container border-t border-outline-variant/60 py-16 px-6 relative">
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+                        
+                        {/* Logo column */}
+                        <div className="md:col-span-5 space-y-4 text-left">
+                            <Link href="/" className="flex items-center gap-2 group self-start">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-300">
+                                    <span className="material-symbols-outlined text-[24px] font-bold">rocket_launch</span>
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold tracking-tight text-on-surface">
+                                        StartUpTracker
+                                    </h1>
+                                    <p className="text-[10px] font-mono font-bold text-on-surface-variant uppercase tracking-widest leading-none">
+                                        Venture Insights
+                                    </p>
+                                </div>
+                            </Link>
+                            <p className="text-body-sm text-on-surface-variant max-w-sm">
+                                Empowering early-stage venture monitoring and startup discovery through real-time community engagement, weekly data indexes, and high-fidelity analytics charts.
                             </p>
-                            <ul className="mb-4 flex flex-col lg:mb-6">
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                    <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                        </span>
-                                    </span>
-                                    <span>
-                                        Read the
-                                        <a
-                                            href="https://laravel.com/docs"
-                                            target="_blank"
-                                            className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                        >
-                                            <span>Documentation</span>
-                                            <svg
-                                                width={10}
-                                                height={11}
-                                                viewBox="0 0 10 11"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-2.5 w-2.5"
-                                            >
-                                                <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="square"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </span>
-                                </li>
-                                <li className="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
-                                    <span className="relative bg-white py-1 dark:bg-[#161615]">
-                                        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-[#e3e3e0] bg-[#FDFDFC] shadow-[0px_0px_1px_0px_rgba(0,0,0,0.03),0px_1px_2px_0px_rgba(0,0,0,0.06)] dark:border-[#3E3E3A] dark:bg-[#161615]">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
-                                        </span>
-                                    </span>
-                                    <span>
-                                        Watch video tutorials at
-                                        <a
-                                            href="https://laracasts.com"
-                                            target="_blank"
-                                            className="ml-1 inline-flex items-center space-x-1 font-medium text-[#f53003] underline underline-offset-4 dark:text-[#FF4433]"
-                                        >
-                                            <span>Laracasts</span>
-                                            <svg
-                                                width={10}
-                                                height={11}
-                                                viewBox="0 0 10 11"
-                                                fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-2.5 w-2.5"
-                                            >
-                                                <path
-                                                    d="M7.70833 6.95834V2.79167H3.54167M2.5 8L7.5 3.00001"
-                                                    stroke="currentColor"
-                                                    strokeLinecap="square"
-                                                />
-                                            </svg>
-                                        </a>
-                                    </span>
-                                </li>
-                            </ul>
-                            <ul className="flex gap-3 text-sm leading-normal">
-                                <li>
-                                    <a
-                                        href="https://cloud.laravel.com"
-                                        target="_blank"
-                                        className="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
-                                    >
-                                        Deploy now
-                                    </a>
-                                </li>
+                        </div>
+
+                        {/* Navigation column 1 */}
+                        <div className="md:col-span-2 space-y-4 text-left">
+                            <h5 className="text-label-caps font-mono font-bold text-on-surface uppercase tracking-widest">Platform</h5>
+                            <ul className="space-y-2.5">
+                                <li><Link href="/explore" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Startups Feed</Link></li>
+                                <li><Link href="/news" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Venture News</Link></li>
+                                <li><Link href="/explore?tab=analytics" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Sector Analytics</Link></li>
+                                <li><Link href="/startups/create" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Submit Startup</Link></li>
                             </ul>
                         </div>
-                        <div className="relative -mb-px aspect-[335/364] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#fff2f2] lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg dark:bg-[#1D0002]">
-                            {/* Laravel Logo */}
-                            <svg
-                                className="w-full max-w-none translate-y-0 text-[#F53003] opacity-100 transition-all duration-750 dark:text-[#F61500] starting:opacity-0 motion-safe:starting:translate-y-6"
-                                viewBox="0 0 438 104"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M17.2036 -3H0V102.197H49.5189V86.7187H17.2036V-3Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M110.256 41.6337C108.061 38.1275 104.945 35.3731 100.905 33.3681C96.8667 31.3647 92.8016 30.3618 88.7131 30.3618C83.4247 30.3618 78.5885 31.3389 74.201 33.2923C69.8111 35.2456 66.0474 37.928 62.9059 41.3333C59.7643 44.7401 57.3198 48.6726 55.5754 53.1293C53.8287 57.589 52.9572 62.274 52.9572 67.1813C52.9572 72.1925 53.8287 76.8995 55.5754 81.3069C57.3191 85.7173 59.7636 89.6241 62.9059 93.0293C66.0474 96.4361 69.8119 99.1155 74.201 101.069C78.5885 103.022 83.4247 103.999 88.7131 103.999C92.8016 103.999 96.8667 102.997 100.905 100.994C104.945 98.9911 108.061 96.2359 110.256 92.7282V102.195H126.563V32.1642H110.256V41.6337ZM108.76 75.7472C107.762 78.4531 106.366 80.8078 104.572 82.8112C102.776 84.8161 100.606 86.4183 98.0637 87.6206C95.5202 88.823 92.7004 89.4238 89.6103 89.4238C86.5178 89.4238 83.7252 88.823 81.2324 87.6206C78.7388 86.4183 76.5949 84.8161 74.7998 82.8112C73.004 80.8078 71.6319 78.4531 70.6856 75.7472C69.7356 73.0421 69.2644 70.1868 69.2644 67.1821C69.2644 64.1758 69.7356 61.3205 70.6856 58.6154C71.6319 55.9102 73.004 53.5571 74.7998 51.5522C76.5949 49.5495 78.738 47.9451 81.2324 46.7427C83.7252 45.5404 86.5178 44.9396 89.6103 44.9396C92.7012 44.9396 95.5202 45.5404 98.0637 46.7427C100.606 47.9451 102.776 49.5487 104.572 51.5522C106.367 53.5571 107.762 55.9102 108.76 58.6154C109.756 61.3205 110.256 64.1758 110.256 67.1821C110.256 70.1868 109.756 73.0421 108.76 75.7472Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M242.805 41.6337C240.611 38.1275 237.494 35.3731 233.455 33.3681C229.416 31.3647 225.351 30.3618 221.262 30.3618C215.974 30.3618 211.138 31.3389 206.75 33.2923C202.36 35.2456 198.597 37.928 195.455 41.3333C192.314 44.7401 189.869 48.6726 188.125 53.1293C186.378 57.589 185.507 62.274 185.507 67.1813C185.507 72.1925 186.378 76.8995 188.125 81.3069C189.868 85.7173 192.313 89.6241 195.455 93.0293C198.597 96.4361 202.361 99.1155 206.75 101.069C211.138 103.022 215.974 103.999 221.262 103.999C225.351 103.999 229.416 102.997 233.455 100.994C237.494 98.9911 240.611 96.2359 242.805 92.7282V102.195H259.112V32.1642H242.805V41.6337ZM241.31 75.7472C240.312 78.4531 238.916 80.8078 237.122 82.8112C235.326 84.8161 233.156 86.4183 230.614 87.6206C228.07 88.823 225.251 89.4238 222.16 89.4238C219.068 89.4238 216.275 88.823 213.782 87.6206C211.289 86.4183 209.145 84.8161 207.35 82.8112C205.554 80.8078 204.182 78.4531 203.236 75.7472C202.286 73.0421 201.814 70.1868 201.814 67.1821C201.814 64.1758 202.286 61.3205 203.236 58.6154C204.182 55.9102 205.554 53.5571 207.35 51.5522C209.145 49.5495 211.288 47.9451 213.782 46.7427C216.275 45.5404 219.068 44.9396 222.16 44.9396C225.251 44.9396 228.07 45.5404 230.614 46.7427C233.156 47.9451 235.326 49.5487 237.122 51.5522C238.917 53.5571 240.312 55.9102 241.31 58.6154C242.306 61.3205 242.806 64.1758 242.806 67.1821C242.805 70.1868 242.305 73.0421 241.31 75.7472Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M438 -3H421.694V102.197H438V-3Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M139.43 102.197H155.735V48.2834H183.712V32.1665H139.43V102.197Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M324.49 32.1665L303.995 85.794L283.498 32.1665H266.983L293.748 102.197H314.242L341.006 32.1665H324.49Z"
-                                    fill="currentColor"
-                                />
-                                <path
-                                    d="M376.571 30.3656C356.603 30.3656 340.797 46.8497 340.797 67.1828C340.797 89.6597 356.094 104 378.661 104C391.29 104 399.354 99.1488 409.206 88.5848L398.189 80.0226C398.183 80.031 389.874 90.9895 377.468 90.9895C363.048 90.9895 356.977 79.3111 356.977 73.269H411.075C413.917 50.1328 398.775 30.3656 376.571 30.3656ZM357.02 61.0967C357.145 59.7487 359.023 43.3761 376.442 43.3761C393.861 43.3761 395.978 59.7464 396.099 61.0967H357.02Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
 
-                            {/* 13 */}
-                            <svg
-                                className="relative -mt-[6.6rem] -ml-8 w-[438px] max-w-none [--stroke-color:#1B1B18] lg:ml-0 dark:[--stroke-color:#FF750F]"
-                                viewBox="0 0 440 392"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <g className="text-[#1B1B18] opacity-100 mix-blend-darken transition-all delay-300 duration-750 dark:text-black dark:mix-blend-normal starting:opacity-0">
-                                    <mask
-                                        id="path-1-mask"
-                                        maskUnits="userSpaceOnUse"
-                                        x="-0.328613"
-                                        y="103"
-                                        width="338"
-                                        height="299"
-                                        fill="black"
-                                    >
-                                        <rect
-                                            fill="white"
-                                            x="-0.328613"
-                                            y="103"
-                                            width="338"
-                                            height="299"
-                                        />
-                                        <path d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z" />
-                                        <path d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z" />
-                                    </mask>
-                                    <path
-                                        d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M234.936 400.8C204.136 400.8 178.936 392.4 159.336 375.6C140.136 358.8 130.536 337 130.536 310.2H200.736C200.736 318.2 203.736 324.8 209.736 330C215.736 335.2 223.736 337.8 233.736 337.8C243.336 337.8 251.136 335 257.136 329.4C263.536 323.8 266.736 316.6 266.736 307.8C266.736 299.8 263.936 293.2 258.336 288C252.736 282.8 245.536 280.2 236.736 280.2H199.536V218.4H236.736C243.536 218.4 249.336 216 254.136 211.2C258.936 206.4 261.336 200.4 261.336 193.2C261.336 184.8 258.736 178.2 253.536 173.4C248.336 168.6 241.736 166.2 233.736 166.2C226.536 166.2 220.336 168.4 215.136 172.8C210.336 177.2 207.936 182.8 207.936 189.6H141.336C141.336 164.8 150.136 144.6 167.736 129C185.336 113 207.936 105 235.536 105C263.136 105 285.536 112.2 302.736 126.6C320.336 141 329.136 160 329.136 183.6C329.136 200.8 324.536 214.8 315.336 225.6C306.136 236 294.336 243.2 279.936 247.2C297.136 252 310.736 260.2 320.736 271.8C331.136 283.4 336.336 298 336.336 315.6C336.336 340.4 326.936 360.8 308.136 376.8C289.336 392.8 264.936 400.8 234.936 400.8Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-1-mask)"
-                                    />
-                                    <path
-                                        d="M26.8714 167.6H1.67139V105.2H94.6714V400.2H26.8714V167.6Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-1-mask)"
-                                    />
-                                </g>
-
-                                <g className="text-[#F3BEC7] opacity-100 transition-all delay-400 duration-750 dark:text-[#4B0600] starting:opacity-0 motion-safe:starting:-translate-x-[26px]">
-                                    <mask
-                                        id="path-2-mask"
-                                        maskUnits="userSpaceOnUse"
-                                        x="25.3357"
-                                        y="103"
-                                        width="338"
-                                        height="299"
-                                        fill="black"
-                                    >
-                                        <rect
-                                            fill="white"
-                                            x="25.3357"
-                                            y="103"
-                                            width="338"
-                                            height="299"
-                                        />
-                                        <path d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z" />
-                                        <path d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z" />
-                                    </mask>
-                                    <path
-                                        d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M260.6 400.8C229.8 400.8 204.6 392.4 185 375.6C165.8 358.8 156.2 337 156.2 310.2H226.4C226.4 318.2 229.4 324.8 235.4 330C241.4 335.2 249.4 337.8 259.4 337.8C269 337.8 276.8 335 282.8 329.4C289.2 323.8 292.4 316.6 292.4 307.8C292.4 299.8 289.6 293.2 284 288C278.4 282.8 271.2 280.2 262.4 280.2H225.2V218.4H262.4C269.2 218.4 275 216 279.8 211.2C284.6 206.4 287 200.4 287 193.2C287 184.8 284.4 178.2 279.2 173.4C274 168.6 267.4 166.2 259.4 166.2C252.2 166.2 246 168.4 240.8 172.8C236 177.2 233.6 182.8 233.6 189.6H167C167 164.8 175.8 144.6 193.4 129C211 113 233.6 105 261.2 105C288.8 105 311.2 112.2 328.4 126.6C346 141 354.8 160 354.8 183.6C354.8 200.8 350.2 214.8 341 225.6C331.8 236 320 243.2 305.6 247.2C322.8 252 336.4 260.2 346.4 271.8C356.8 283.4 362 298 362 315.6C362 340.4 352.6 360.8 333.8 376.8C315 392.8 290.6 400.8 260.6 400.8Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-2-mask)"
-                                    />
-                                    <path
-                                        d="M52.5357 167.6H27.3357V105.2H120.336V400.2H52.5357V167.6Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-2-mask)"
-                                    />
-                                </g>
-
-                                <g className="text-[#F8B803] opacity-100 mix-blend-color transition-all delay-400 duration-750 dark:text-[#391800] dark:mix-blend-hard-light starting:opacity-0 motion-safe:starting:-translate-x-[51px]">
-                                    <mask
-                                        id="path-3-mask"
-                                        maskUnits="userSpaceOnUse"
-                                        x="51"
-                                        y="103"
-                                        width="338"
-                                        height="299"
-                                        fill="black"
-                                    >
-                                        <rect
-                                            fill="white"
-                                            x="51"
-                                            y="103"
-                                            width="338"
-                                            height="299"
-                                        />
-                                        <path d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z" />
-                                        <path d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z" />
-                                    </mask>
-                                    <path
-                                        d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M286.264 400.8C255.464 400.8 230.264 392.4 210.664 375.6C191.464 358.8 181.864 337 181.864 310.2H252.064C252.064 318.2 255.064 324.8 261.064 330C267.064 335.2 275.064 337.8 285.064 337.8C294.664 337.8 302.464 335 308.464 329.4C314.864 323.8 318.064 316.6 318.064 307.8C318.064 299.8 315.264 293.2 309.664 288C304.064 282.8 296.864 280.2 288.064 280.2H250.864V218.4H288.064C294.864 218.4 300.664 216 305.464 211.2C310.264 206.4 312.664 200.4 312.664 193.2C312.664 184.8 310.064 178.2 304.864 173.4C299.664 168.6 293.064 166.2 285.064 166.2C277.864 166.2 271.664 168.4 266.464 172.8C261.664 177.2 259.264 182.8 259.264 189.6H192.664C192.664 164.8 201.464 144.6 219.064 129C236.664 113 259.264 105 286.864 105C314.464 105 336.864 112.2 354.064 126.6C371.664 141 380.464 160 380.464 183.6C380.464 200.8 375.864 214.8 366.664 225.6C357.464 236 345.664 243.2 331.264 247.2C348.464 252 362.064 260.2 372.064 271.8C382.464 283.4 387.664 298 387.664 315.6C387.664 340.4 378.264 360.8 359.464 376.8C340.664 392.8 316.264 400.8 286.264 400.8Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-3-mask)"
-                                    />
-                                    <path
-                                        d="M78.2 167.6H53V105.2H146V400.2H78.2V167.6Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-3-mask)"
-                                    />
-                                </g>
-
-                                <g className="text-[#F3BEC7] opacity-100 mix-blend-multiply transition-all delay-400 duration-750 dark:text-[#733000] dark:mix-blend-normal starting:opacity-0 motion-safe:starting:-translate-x-[78px]">
-                                    <mask
-                                        id="path-4-mask"
-                                        maskUnits="userSpaceOnUse"
-                                        x="76.6643"
-                                        y="103"
-                                        width="338"
-                                        height="299"
-                                        fill="black"
-                                    >
-                                        <rect
-                                            fill="white"
-                                            x="76.6643"
-                                            y="103"
-                                            width="338"
-                                            height="299"
-                                        />
-                                        <path d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z" />
-                                        <path d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z" />
-                                    </mask>
-                                    <path
-                                        d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M311.929 400.8C281.129 400.8 255.929 392.4 236.329 375.6C217.129 358.8 207.529 337 207.529 310.2H277.729C277.729 318.2 280.729 324.8 286.729 330C292.729 335.2 300.729 337.8 310.729 337.8C320.329 337.8 328.129 335 334.129 329.4C340.529 323.8 343.729 316.6 343.729 307.8C343.729 299.8 340.929 293.2 335.329 288C329.729 282.8 322.529 280.2 313.729 280.2H276.529V218.4H313.729C320.529 218.4 326.329 216 331.129 211.2C335.929 206.4 338.329 200.4 338.329 193.2C338.329 184.8 335.729 178.2 330.529 173.4C325.329 168.6 318.729 166.2 310.729 166.2C303.529 166.2 297.329 168.4 292.129 172.8C287.329 177.2 284.929 182.8 284.929 189.6H218.329C218.329 164.8 227.129 144.6 244.729 129C262.329 113 284.929 105 312.529 105C340.129 105 362.529 112.2 379.729 126.6C397.329 141 406.129 160 406.129 183.6C406.129 200.8 401.529 214.8 392.329 225.6C383.129 236 371.329 243.2 356.929 247.2C374.129 252 387.729 260.2 397.729 271.8C408.129 283.4 413.329 298 413.329 315.6C413.329 340.4 403.929 360.8 385.129 376.8C366.329 392.8 341.929 400.8 311.929 400.8Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-4-mask)"
-                                    />
-                                    <path
-                                        d="M103.864 167.6H78.6643V105.2H171.664V400.2H103.864V167.6Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-4-mask)"
-                                    />
-                                </g>
-
-                                <g className="text-[#F3BEC7] opacity-100 mix-blend-hard-light transition-all delay-400 duration-750 dark:text-[#4B0600] starting:opacity-0 motion-safe:starting:-translate-x-[102px]">
-                                    <mask
-                                        id="path-5-mask"
-                                        maskUnits="userSpaceOnUse"
-                                        x="102.329"
-                                        y="103"
-                                        width="338"
-                                        height="299"
-                                        fill="black"
-                                    >
-                                        <rect
-                                            fill="white"
-                                            x="102.329"
-                                            y="103"
-                                            width="338"
-                                            height="299"
-                                        />
-                                        <path d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z" />
-                                        <path d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z" />
-                                    </mask>
-                                    <path
-                                        d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z"
-                                        fill="currentColor"
-                                    />
-                                    <path
-                                        d="M337.593 400.8C306.793 400.8 281.593 392.4 261.993 375.6C242.793 358.8 233.193 337 233.193 310.2H303.393C303.393 318.2 306.393 324.8 312.393 330C318.393 335.2 326.393 337.8 336.393 337.8C345.993 337.8 353.793 335 359.793 329.4C366.193 323.8 369.393 316.6 369.393 307.8C369.393 299.8 366.593 293.2 360.993 288C355.393 282.8 348.193 280.2 339.393 280.2H302.193V218.4H339.393C346.193 218.4 351.993 216 356.793 211.2C361.593 206.4 363.993 200.4 363.993 193.2C363.993 184.8 361.393 178.2 356.193 173.4C350.993 168.6 344.393 166.2 336.393 166.2C329.193 166.2 322.993 168.4 317.793 172.8C312.993 177.2 310.593 182.8 310.593 189.6H243.993C243.993 164.8 252.793 144.6 270.393 129C287.993 113 310.593 105 338.193 105C365.793 105 388.193 112.2 405.393 126.6C422.993 141 431.793 160 431.793 183.6C431.793 200.8 427.193 214.8 417.993 225.6C408.793 236 396.993 243.2 382.593 247.2C399.793 252 413.393 260.2 423.393 271.8C433.793 283.4 438.993 298 438.993 315.6C438.993 340.4 429.593 360.8 410.793 376.8C391.993 392.8 367.593 400.8 337.593 400.8Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-5-mask)"
-                                    />
-                                    <path
-                                        d="M129.529 167.6H104.329V105.2H197.329V400.2H129.529V167.6Z"
-                                        stroke="var(--stroke-color)"
-                                        strokeWidth="2.4"
-                                        mask="url(#path-5-mask)"
-                                    />
-                                </g>
-                            </svg>
-                            <div className="absolute inset-0 rounded-t-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-t-none lg:rounded-r-lg dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"></div>
+                        {/* Navigation column 2 */}
+                        <div className="md:col-span-2 space-y-4 text-left">
+                            <h5 className="text-label-caps font-mono font-bold text-on-surface uppercase tracking-widest">Resources</h5>
+                            <ul className="space-y-2.5">
+                                <li><a href="#" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Documentation</a></li>
+                                <li><a href="#" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Ecosystem API</a></li>
+                                <li><a href="#" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</a></li>
+                                <li><a href="#" className="text-body-sm text-on-surface-variant hover:text-primary transition-colors">Terms of Service</a></li>
+                            </ul>
                         </div>
-                    </main>
-                </div>
-                <div className="hidden h-14.5 lg:block"></div>
+
+                        {/* Social / Newsletter Column */}
+                        <div className="md:col-span-3 space-y-4 text-left">
+                            <h5 className="text-label-caps font-mono font-bold text-on-surface uppercase tracking-widest">Get Updates</h5>
+                            <p className="text-xs text-on-surface-variant leading-relaxed">
+                                Join our weekly newsletter covering early stage trends, high-momentum startups, and active sectors.
+                            </p>
+                            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="bg-surface border border-outline-variant/60 rounded-full px-4 py-2 text-xs font-mono w-full focus:outline-none focus:border-primary transition-colors"
+                                />
+                                <button className="bg-primary hover:bg-primary/95 text-on-primary text-xs font-mono font-bold uppercase tracking-wider px-4 rounded-full transition-colors">
+                                    Join
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <div className="max-w-7xl mx-auto border-t border-outline-variant/40 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-xs font-mono text-on-surface-variant">
+                            © {new Date().getFullYear()} Venture Insights Tracker. Built with Laravel + React + Tailwind CSS. All rights reserved.
+                        </p>
+                        <div className="flex gap-4 text-xs font-mono text-on-surface-variant">
+                            <a href="#" className="hover:text-primary transition-colors">Twitter</a>
+                            <span>•</span>
+                            <a href="#" className="hover:text-primary transition-colors">GitHub</a>
+                            <span>•</span>
+                            <a href="#" className="hover:text-primary transition-colors">Discord</a>
+                        </div>
+                    </div>
+                </footer>
+
             </div>
         </>
     );

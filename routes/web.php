@@ -12,16 +12,23 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
-Route::get('/', [StartupController::class, 'index'])->name('home');
+Route::get('/explore', [StartupController::class, 'index'])->name('home');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 
-Route::get('/welcome', function (\Illuminate\Http\Request $request) {
-    if ($request->user() && $request->user()->is_admin) {
-        return redirect()->route('admin.dashboard');
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    if ($request->user()) {
+        if ($request->user()->is_admin) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('home'); // Redirects to /explore
     }
     return inertia('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
+})->name('landing');
+
+Route::get('/welcome', function () {
+    return redirect()->route('landing');
 })->name('welcome');
 
 // Google OAuth routes

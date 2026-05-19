@@ -20,7 +20,7 @@ class LoginResponse implements LoginResponseContract
         // Redirect admins directly to the administrative console
         $redirectUrl = ($user && $user->is_admin) 
             ? '/admin/dashboard' 
-            : '/';
+            : '/explore';
 
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])

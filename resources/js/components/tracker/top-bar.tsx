@@ -41,7 +41,7 @@ export default function TopBar({
             }
             
             // Allow searching on the news page as well
-            const basePath = (url === '/' || url.startsWith('/?') || url.startsWith('/news')) ? (url.split('?')[0] || '/') : '/';
+            const basePath = (url.startsWith('/explore') || url.startsWith('/news')) ? (url.split('?')[0] || '/explore') : '/explore';
             const query = params.toString();
             
             router.get(
@@ -67,13 +67,13 @@ export default function TopBar({
             document.removeEventListener('mousedown', handleClickOutside);
 
             if (searchTimeout.current) {
-clearTimeout(searchTimeout.current);
-}
+                clearTimeout(searchTimeout.current);
+            }
         };
     }, []);
 
     function handleSectorFilter(sector: string | null) {
-        const basePath = (url === '/' || url.startsWith('/?')) ? (url.split('?')[0] || '/') : '/';
+        const basePath = url.startsWith('/explore') ? (url.split('?')[0] || '/explore') : '/explore';
         const params = new URLSearchParams(window.location.search);
 
         if (sector) {
@@ -110,7 +110,7 @@ clearTimeout(searchTimeout.current);
 
             <div className="flex items-center gap-4">
                 {/* Filter dropdown - Only visible on home page */}
-                {(url === '/' || url.startsWith('/?')) && (
+                {url.startsWith('/explore') && (
                     <div className="relative" ref={dropdownRef}>
                         <button
                             onClick={() => setFilterOpen(!filterOpen)}
@@ -176,7 +176,7 @@ clearTimeout(searchTimeout.current);
                     </div>
                 )}
 
-                {(url === '/' || url.startsWith('/?')) && (
+                {url.startsWith('/explore') && (
                     <div className="h-8 w-px bg-outline-variant mx-2" />
                 )}
 
