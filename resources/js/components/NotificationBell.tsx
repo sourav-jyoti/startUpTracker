@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Bell, Check, Trash2, Mail, Rocket, ArrowUpCircle, ExternalLink } from 'lucide-react';
+import { Bell, Check, Trash2, Mail, Rocket, ArrowUpCircle, ExternalLink, Bookmark, ArrowDownCircle } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { 
@@ -19,6 +19,7 @@ interface NotificationData {
     startup_id?: number;
     user_id?: number;
     upvoter_id?: number;
+    bookmarker_id?: number;
 }
 
 interface Notification {
@@ -120,6 +121,8 @@ export default function NotificationBell() {
     function getIconForType(type: string, className = "w-5 h-5") {
         switch (type) {
             case 'upvote': return <ArrowUpCircle className={`${className} text-emerald-500`} />;
+            case 'deupvote': return <ArrowDownCircle className={`${className} text-amber-500`} />;
+            case 'bookmark': return <Bookmark className={`${className} text-indigo-500`} />;
             case 'new_startup': return <Rocket className={`${className} text-primary`} />;
             case 'new_user': return <Mail className={`${className} text-blue-500`} />;
             case 'user_deleted': return <Trash2 className={`${className} text-error`} />;

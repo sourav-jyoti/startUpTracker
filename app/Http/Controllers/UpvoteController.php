@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Startup;
 use Illuminate\Http\RedirectResponse;
 use App\Notifications\StartupUpvoted;
+use App\Notifications\StartupDeupvoted;
 
 class UpvoteController extends Controller
 {
@@ -20,6 +21,12 @@ class UpvoteController extends Controller
         if ($user->upvotedStartups()->where('startup_id', $startup->id)->exists()) {
             $user->upvotedStartups()->detach($startup->id);
             $message = 'Upvote removed!';
+
+            if ($startup->user_id && $startup->user_id !== $user->id) {
+                if ($startup->user) {
+                    $startup->user->notify(new StartupDeupvoted($startup, $user));
+                }
+            }
         } else {
             $user->upvotedStartups()->attach($startup->id);
             $message = 'Startup upvoted successfully!';
