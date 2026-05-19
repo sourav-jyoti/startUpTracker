@@ -37,7 +37,7 @@ export function AppSidebar() {
     ] : [
         {
             title: 'Explore',
-            href: '/',
+            href: '/explore',
             icon: Search,
         },
     ];

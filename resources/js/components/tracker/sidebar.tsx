@@ -9,12 +9,12 @@ export default function Sidebar() {
     const user = props.auth?.user ?? null;
 
     const navItems = [
-        { name: 'Explore', icon: 'explore', href: '/' },
+        { name: 'Explore', icon: 'explore', href: '/explore' },
         ...(user ? [
-            { name: 'Submissions', icon: 'rocket_launch', href: '/?tab=submissions' },
-            { name: 'Watchlist', icon: 'bookmark', href: '/?tab=watchlist' },
+            { name: 'Submissions', icon: 'rocket_launch', href: '/explore?tab=submissions' },
+            { name: 'Watchlist', icon: 'bookmark', href: '/explore?tab=watchlist' },
         ] : []),
-        { name: 'Analytics', icon: 'monitoring', href: '/?tab=analytics' },
+        { name: 'Analytics', icon: 'monitoring', href: '/explore?tab=analytics' },
         { name: 'News', icon: 'newspaper', href: '/news' },
     ];
 
@@ -30,9 +30,9 @@ export default function Sidebar() {
         const targetTab = targetUrlObj.searchParams.get('tab') || 'explore';
         const targetPath = targetUrlObj.pathname;
 
-        if (targetPath === '/') {
+        if (targetPath === '/' || targetPath === '/explore') {
             // Under root path, both path and tab parameter must match
-            return (currentPath === '/' || (currentPath.startsWith('/startups') && !currentPath.startsWith('/startups/create'))) && currentTab === targetTab;
+            return (currentPath === '/' || currentPath === '/explore' || (currentPath.startsWith('/startups') && !currentPath.startsWith('/startups/create'))) && currentTab === targetTab;
         }
 
         return currentPath.startsWith(targetPath);
@@ -43,7 +43,7 @@ export default function Sidebar() {
             {/* Logo */}
             <div className="mb-10 px-2">
                 <h1 className="text-headline-md font-semibold text-primary leading-tight tracking-tight">
-                    Tracker
+                    StartUpTracker
                 </h1>
                 <p className="text-label-caps font-mono font-bold text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">
                     Venture Insights
