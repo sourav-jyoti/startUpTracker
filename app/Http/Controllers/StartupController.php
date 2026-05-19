@@ -264,7 +264,11 @@ class StartupController extends Controller
     {
         $validated = $request->validated();
 
-        $validated['slug'] = Str::slug($validated['name']);
+        $slug = Str::slug($validated['name']);
+        if (Startup::where('slug', $slug)->exists()) {
+            $slug .= '-' . uniqid();
+        }
+        $validated['slug'] = $slug;
         $validated['week_number'] = min(10, max(1, $request->integer('week_number', min(10, (int) date('W')))));
         $validated['year'] = (int) date('Y');
         $validated['user_id'] = $request->user()?->id;
@@ -313,7 +317,13 @@ class StartupController extends Controller
     {
         $validated = $request->validated();
         
-        $validated['slug'] = Str::slug($validated['name']);
+        if ($validated['name'] !== $startup->name) {
+            $slug = Str::slug($validated['name']);
+            if (Startup::where('slug', $slug)->where('id', '!=', $startup->id)->exists()) {
+                $slug .= '-' . uniqid();
+            }
+            $validated['slug'] = $slug;
+        }
         $validated['total_funding'] = $validated['funding_amount'] ?? 0;
         $validated['funding_label'] = $validated['funding_stage'];
 

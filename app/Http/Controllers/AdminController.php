@@ -72,11 +72,15 @@ class AdminController extends Controller
             'sector' => ['required', 'string', 'max:100'],
             'hq_location' => ['required', 'string', 'max:255'],
             'website_url' => ['nullable', 'url', 'max:255'],
+            'week_number' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'year' => ['nullable', 'integer'],
         ]);
 
         $validated['slug'] = Str::slug($validated['name']) . '-' . uniqid();
         $validated['user_id'] = auth()->id();
         $validated['is_featured'] = $request->boolean('is_featured', false);
+        $validated['week_number'] = min(10, max(1, $request->integer('week_number', min(10, (int) date('W')))));
+        $validated['year'] = $request->integer('year', (int) date('Y'));
 
         $startup = Startup::create($validated);
 
@@ -119,6 +123,8 @@ class AdminController extends Controller
             'sector' => ['required', 'string', 'max:100'],
             'hq_location' => ['required', 'string', 'max:255'],
             'website_url' => ['nullable', 'url', 'max:255'],
+            'week_number' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'year' => ['nullable', 'integer'],
         ]);
 
         if ($request->name !== $startup->name) {
@@ -126,6 +132,12 @@ class AdminController extends Controller
         }
 
         $validated['is_featured'] = $request->boolean('is_featured', false);
+        if ($request->has('week_number')) {
+            $validated['week_number'] = min(10, max(1, $request->integer('week_number', min(10, (int) date('W')))));
+        }
+        if ($request->has('year')) {
+            $validated['year'] = $request->integer('year', (int) date('Y'));
+        }
 
         $startup->update($validated);
 

@@ -2,12 +2,42 @@ import type { SVGAttributes } from 'react';
 
 export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
     return (
-        <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
-            <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M17.2 5.63325L8.6 0.855469L0 5.63325V32.1434L16.2 41.1434L32.4 32.1434V23.699L40 19.4767V9.85547L31.4 5.07769L22.8 9.85547V18.2999L17.2 21.411V5.63325ZM38 18.2999L32.4 21.411V15.2545L38 12.1434V18.2999ZM36.9409 10.4439L31.4 13.5221L25.8591 10.4439L31.4 7.36561L36.9409 10.4439ZM24.8 18.2999V12.1434L30.4 15.2545V21.411L24.8 18.2999ZM23.8 20.0323L29.3409 23.1105L16.2 30.411L10.6591 27.3328L23.8 20.0323ZM7.6 27.9212L15.2 32.1434V38.2999L2 30.9666V7.92116L7.6 11.0323V27.9212ZM8.6 9.29991L3.05913 6.22165L8.6 3.14339L14.1409 6.22165L8.6 9.29991ZM30.4 24.8101L17.2 32.1434V38.2999L30.4 30.9666V24.8101ZM9.6 11.0323L15.2 7.92117V22.5221L9.6 25.6333V11.0323Z"
-            />
+        <svg {...props} viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Smooth squircle canvas with vibrant gradient */}
+            <rect width="256" height="256" rx="64" fill="url(#rocketGrad)" />
+            
+            {/* Sleek premium minimalist rocket icon angled beautifully */}
+            <g transform="translate(128, 128) rotate(45) translate(-128, -128)">
+                {/* Main rocket fuselage */}
+                <path d="M128 50C128 50 148 85 148 135C148 150 142 165 128 175C114 165 108 150 108 135C108 85 128 50 128 50Z" fill="white" />
+                
+                {/* Left stabilizer wing */}
+                <path d="M106 145C96 150 86 168 86 168C86 168 103 166 111 157L106 145Z" fill="white" opacity="0.9" />
+                
+                {/* Right stabilizer wing */}
+                <path d="M150 145C160 150 170 168 170 168C170 168 153 166 145 157L150 145Z" fill="white" opacity="0.9" />
+                
+                {/* Round cockpit window */}
+                <circle cx="128" cy="105" r="10" fill="url(#windowGrad)" />
+                
+                {/* Exquisite fire exhaust flame */}
+                <path d="M128 178C128 178 136 190 128 206C120 190 128 178 128 178Z" fill="#ff7a00" opacity="0.95" />
+                <path d="M128 178C128 178 132 186 128 196C124 186 128 178 128 178Z" fill="#ffc800" />
+            </g>
+            
+            <defs>
+                {/* Background Gradient: Indigo to Emerald/Cyan */}
+                <linearGradient id="rocketGrad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#6366f1" />
+                    <stop offset="100%" stopColor="#10b981" />
+                </linearGradient>
+                
+                {/* Cockpit Window Gradient: Teal to White */}
+                <linearGradient id="windowGrad" x1="118" y1="95" x2="138" y2="115" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#06b6d4" />
+                    <stop offset="100%" stopColor="#e0f7fa" />
+                </linearGradient>
+            </defs>
         </svg>
     );
 }

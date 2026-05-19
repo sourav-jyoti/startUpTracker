@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { login, register } from '@/routes';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { useState } from 'react';
 import { 
     TrendingUp, 
@@ -55,9 +56,7 @@ export default function Welcome({
                         
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2 group">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-md shadow-primary/20 group-hover:scale-105 transition-transform duration-300">
-                                <span className="material-symbols-outlined text-[24px] font-bold">rocket_launch</span>
-                            </div>
+                            <AppLogoIcon className="w-10 h-10 shadow-md shadow-primary/20 group-hover:scale-105 transition-transform duration-300" />
                             <div>
                                 <h1 className="text-xl font-bold tracking-tight text-on-surface flex items-center gap-1.5">
                                     StartUpTracker
@@ -656,9 +655,7 @@ export default function Welcome({
                         {/* Logo column */}
                         <div className="md:col-span-5 space-y-4 text-left">
                             <Link href="/" className="flex items-center gap-2 group self-start">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform duration-300">
-                                    <span className="material-symbols-outlined text-[24px] font-bold">rocket_launch</span>
-                                </div>
+                                <AppLogoIcon className="w-10 h-10 shadow-md group-hover:scale-105 transition-transform duration-300" />
                                 <div>
                                     <h1 className="text-xl font-bold tracking-tight text-on-surface">
                                         StartUpTracker
